@@ -22,6 +22,7 @@ def upgrade():
         sa.Column('id', sa.Integer, primary_key=True, nullable=False),
         sa.Column('slug', sa.String, unique=True, nullable=False),
         sa.Column('name', sa.String, nullable=False),
+        sa.Column('description', sa.String, nullable=False),
         sa.Column('creation_date', sa.DateTime, nullable=False),
         sa.Column('creator_id', sa.Integer, sa.ForeignKey('account.id'),
                   nullable=False),
