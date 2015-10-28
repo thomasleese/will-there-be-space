@@ -9,11 +9,10 @@
     function drawChart() {
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Time');
-      data.addColumn('number', 'Free Spaces');
-      data.addColumn('number', 'Used Spaces');
+      data.addColumn('number', 'Busyness');
       data.addRows([
         {% for row in chart %}
-          ['{{ ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][row[0]] }} {{ row[1] }}h', {{ row[2] }}, {{ row[3] }}],
+          ['{{ ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][row[0]] }} {{ row[1] }}h', {{ row[2] }}],
         {% endfor %}
       ]);
 
@@ -39,7 +38,7 @@
   {% if now_free and now_used %}
     <div class="card" style="width: 60%; margin: auto;">
       <div class="card-block">
-        <p class="card-text">Usually around this time, there are <strong>{{ now_free | round(1) }} free spaces</strong> and <strong>{{ now_used | round(1) }} used spaces</strong>.</p>
+        <p class="card-text">Usually around this time, it is <strong>{{ now_busyness * 100 | round(0) }}% busy</strong>.</p>
       </div>
     </div>
   {% endif %}
@@ -55,8 +54,7 @@
     <thead class="thead-default">
       <tr>
         <th>#</th>
-        <th>Free Spaces</th>
-        <th>Used Spaces</th>
+        <th>Busyness</th>
         <th>Date</th>
         <th>Author</th>
       </tr>
@@ -66,8 +64,7 @@
       {% for update in place.updates | islice(10) %}
         <tr>
           <td>{{ loop.index }}</td>
-          <td>{{ update.free_spaces }}</td>
-          <td>{{ update.used_spaces }}</td>
+          <td>{{ update.busyness }}</td>
           <td>{{ update.date }}</td>
           <td>{{ update.author.ip_address }}</td>
         </tr>

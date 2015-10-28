@@ -46,6 +46,23 @@ def upgrade():
     )
 
     op.create_table(
+        'place_scale',
+        sa.Column('place_id', sa.Integer, sa.ForeignKey('place.id'),
+                  primary_key=True, nullable=False),
+        sa.Column('text_0', sa.String, nullable=False),
+        sa.Column('text_1', sa.String, nullable=False),
+        sa.Column('text_2', sa.String, nullable=False),
+        sa.Column('text_3', sa.String, nullable=False),
+        sa.Column('text_4', sa.String, nullable=False),
+        sa.Column('text_5', sa.String, nullable=False),
+        sa.Column('text_6', sa.String, nullable=False),
+        sa.Column('text_7', sa.String, nullable=False),
+        sa.Column('text_8', sa.String, nullable=False),
+        sa.Column('text_9', sa.String, nullable=False),
+        sa.Column('text_10', sa.String, nullable=False),
+    )
+
+    op.create_table(
         'place_change',
         sa.Column('id', sa.Integer, primary_key=True, nullable=False),
         sa.Column('place_id', sa.Integer, sa.ForeignKey('place.id'),
@@ -68,8 +85,7 @@ def upgrade():
         sa.Column('author_id', sa.Integer, sa.ForeignKey('author.id'),
                   nullable=False),
         sa.Column('date', sa.DateTime, nullable=False),
-        sa.Column('used_spaces', sa.Integer, nullable=False),
-        sa.Column('free_spaces', sa.Integer, nullable=False),
+        sa.Column('busyness', sa.Integer, nullable=False),
         sa.Column('approval_id', sa.Integer, sa.ForeignKey('approval.id'),
                   nullable=True),
     )
@@ -78,6 +94,7 @@ def upgrade():
 def downgrade():
     op.drop_table('place_update')
     op.drop_table('place_change')
+    op.drop_table('place_scale')
     op.drop_table('place')
     op.drop_table('approval')
     op.drop_table('author')

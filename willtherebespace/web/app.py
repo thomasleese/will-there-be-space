@@ -7,7 +7,8 @@ from werkzeug.contrib.fixers import ProxyFix
 import sqlalchemy.sql
 
 from .. import database
-from ..models import Author, Place, PlaceUpdate, _Session as SqlSession
+from ..models import Author, Place, PlaceScale, PlaceUpdate, \
+    _Session as SqlSession
 
 
 app = flask.Flask('willtherebespace.web')
@@ -48,8 +49,7 @@ def place(slug):
         SELECT
             to_char(date, 'ID') AS day,
             to_char(date, 'HH24') as hour,
-            AVG(free_spaces) AS frees,
-            AVG(used_spaces) AS useds
+            AVG(busyness) AS busyness
         FROM
             place_update
         WHERE
@@ -59,60 +59,46 @@ def place(slug):
             to_char(date, 'HH24')
     """
 
-    free_results = {}
-    used_results = {}
-
+    raw_results = {}
     for row in app.sql_engine.execute(sqlalchemy.sql.text(sql), place_id=place.id):
-        free_results[(int(row[0]) - 1, int(row[1]))] = row[2]
-        used_results[(int(row[0]) - 1, int(row[1]))] = row[3]
+        raw_results[(int(row[0]) - 1, int(row[1]))] = row[2]
 
     results = []
     dict_results = {}
 
-    if free_results and used_results:
-        free_average = sum(x for x in free_results.values()) / len(free_results)
-        used_average = sum(x for x in used_results.values()) / len(used_results)
+    if raw_results:
+        average = sum(x for x in raw_results.values()) / len(raw_results)
 
         results = []
         for day in range(7):
             for hour in range(24):
-                free = free_results.get((day, hour))
-                used = used_results.get((day, hour))
+                busyness = raw_results.get((day, hour))
 
-                if free is None:
-                    assert used is None
-                if used is None:
-                    assert free is None
-
-                if free is None or used is None:
+                if busyness is None:
                     # try the day before
                     day_before = day - 1
                     while day_before != day:
-                        free_before = free_results.get((day_before, hour))
-                        used_before = used_results.get((day_before, hour))
-                        if free_before is not None and used_before is not None:
-                            free = free_before
-                            used = used_before
+                        busyness_before = raw_results.get((day_before, hour))
+                        if busyness_before is not None:
+                            busyness = busyness_before
                             break
 
                         day_before -= 1
                         if day_before < 0:
                             day_before = 6
 
-                    if free is None or used is None:
+                    if busyness is None:
                         # average
-                        free = free_average
-                        used = used_average
+                        busyness = average
 
-                dict_results[(day, hour)] = (free, used)
-                results.append((day, hour, free, used))
+                dict_results[(day, hour)] = busyness
+                results.append((day, hour, busyness))
 
     now = datetime.datetime.now()
-    now_results = dict_results.get((now.weekday(), now.hour), (None, None))
+    now_results = dict_results.get((now.weekday(), now.hour))
 
     return flask.render_template('place.html', place=place, chart=results,
-                                 now_free=now_results[0],
-                                 now_used=now_results[1])
+                                 now_busyness=now_results)
 
 
 def make_author():
@@ -133,6 +119,7 @@ def new_place():
             author = make_author()
             place = Place(v.document['name'], v.document['description'],
                           v.document['location'], author)
+            place.scale = PlaceScale()
             flask.g.sql_session.add(place)
             flask.g.sql_session.commit()
             return flask.redirect(flask.url_for('.place', slug=place.slug))
@@ -150,15 +137,13 @@ def update_place(slug):
     if flask.request.method == 'POST':
         # TODO add >0 checking
         v = Validator({
-            'free': {'type': 'integer', 'coerce': int, 'required': True},
-            'used': {'type': 'integer', 'coerce': int, 'required': True},
+            'busyness': {'type': 'integer', 'coerce': int, 'required': True, 'min': 0, 'max': 10},
         })
 
         form = dict(flask.request.form.items())
         if v.validate(form):
             author = make_author()
-            update = PlaceUpdate(v.document['used'], v.document['free'],
-                                 author, place=place)
+            update = PlaceUpdate(v.document['busyness'], author, place=place)
 
             flask.g.sql_session.add(update)
             flask.g.sql_session.commit()

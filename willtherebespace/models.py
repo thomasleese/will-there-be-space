@@ -54,15 +54,32 @@ class Place(_Base):
         self.author = author
 
 
+class PlaceScale(_Base):
+    __tablename__ = 'place_scale'
+
+    place = relationship('Place', backref=backref('scale', uselist=False))
+
+    def __init__(self):
+        self.text_0 = 'Empty'
+        self.text_1 = 'Very empty'
+        self.text_2 = 'Fairly empty'
+        self.text_3 = 'Reasonably empty'
+        self.text_4 = 'Almost half full'
+        self.text_5 = 'Half full'
+        self.text_6 = 'Just over half full'
+        self.text_7 = 'Reasonably full'
+        self.text_8 = 'Fairly full'
+        self.text_9 = 'Very full'
+        self.text_10 = 'Full'
+
 class PlaceUpdate(_Base):
     __tablename__ = 'place_update'
 
     author = relationship('Author', backref=backref('place_updates'))
     place = relationship('Place', backref=backref('updates', order_by='desc(PlaceUpdate.date)'))
 
-    def __init__(self, used_spaces, free_spaces, author, place=None):
-        self.used_spaces = used_spaces
-        self.free_spaces = free_spaces
+    def __init__(self, busyness, author, place=None):
+        self.busyness = busyness
         self.author = author
         self.place = place
         self.date = datetime.datetime.now()
