@@ -1,3 +1,4 @@
+import datetime
 import itertools
 
 from cerberus import Validator
@@ -66,6 +67,7 @@ def place(slug):
         used_results[(int(row[0]) - 1, int(row[1]))] = row[3]
 
     results = []
+    dict_results = {}
 
     if free_results and used_results:
         free_average = sum(x for x in free_results.values()) / len(free_results)
@@ -102,9 +104,15 @@ def place(slug):
                         free = free_average
                         used = used_average
 
+                dict_results[(day, hour)] = (free, used)
                 results.append((day, hour, free, used))
 
-    return flask.render_template('place.html', place=place, chart=results)
+    now = datetime.datetime.now()
+    now_results = dict_results.get((now.weekday(), now.hour), (None, None))
+
+    return flask.render_template('place.html', place=place, chart=results,
+                                 now_free=now_results[0],
+                                 now_used=now_results[1])
 
 
 def make_author():

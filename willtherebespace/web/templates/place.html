@@ -33,8 +33,18 @@
 
 {% block content %}
   <h1>{{ place.name }}</h1>
-  <p>{{ place.description }}</p>
-  <p>{{ place.location }}</p>
+  <p class="lead">{{ place.description }}</p>
+  <p class="text-muted">{{ place.location }}</p>
+
+  {% if now_free and now_used %}
+    <div class="card" style="width: 60%; margin: auto;">
+      <div class="card-block">
+        <p class="card-text">Usually around this time, there are <strong>{{ now_free | round(1) }} free spaces</strong> and <strong>{{ now_used | round(1) }} used spaces</strong>.</p>
+      </div>
+    </div>
+  {% endif %}
+
+  <br />
 
   <h2>Chart</h2>
   <div id="chart"></div>
