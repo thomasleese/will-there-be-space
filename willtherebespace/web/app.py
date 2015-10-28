@@ -1,3 +1,5 @@
+import itertools
+
 from cerberus import Validator
 import flask
 from werkzeug.contrib.fixers import ProxyFix
@@ -9,6 +11,8 @@ from ..models import Author, Place, PlaceUpdate, _Session as SqlSession
 
 app = flask.Flask('willtherebespace.web')
 app.wsgi_app = ProxyFix(app.wsgi_app)
+
+app.jinja_env.filters['islice'] = itertools.islice
 
 
 @app.before_first_request

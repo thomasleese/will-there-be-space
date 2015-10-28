@@ -39,7 +39,7 @@
   <h2>Chart</h2>
   <div id="chart"></div>
 
-  <h2>Updates</h2>
+  <h2>Latest Updates</h2>
 
   <table class="table table-striped">
     <thead class="thead-default">
@@ -53,7 +53,7 @@
     </thead>
 
     <tbody>
-      {% for update in place.updates %}
+      {% for update in place.updates | islice(10) %}
         <tr>
           <td>{{ loop.index }}</td>
           <td>{{ update.free_spaces }}</td>

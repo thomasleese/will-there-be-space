@@ -58,7 +58,7 @@ class PlaceUpdate(_Base):
     __tablename__ = 'place_update'
 
     author = relationship('Author', backref=backref('place_updates'))
-    place = relationship('Place', backref=backref('updates'))
+    place = relationship('Place', backref=backref('updates', order_by='desc(PlaceUpdate.date)'))
 
     def __init__(self, used_spaces, free_spaces, author, place=None):
         self.used_spaces = used_spaces
