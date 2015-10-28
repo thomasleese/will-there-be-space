@@ -37,7 +37,33 @@ def place(slug):
     place = flask.g.sql_session.query(Place) \
         .filter(Place.slug == slug) \
         .one()
-    return flask.render_template('place.html', place=place)
+
+    sql = """
+        SELECT
+            day,
+            hour,
+            AVG(frees) AS free,
+            AVG(useds) AS used
+        FROM (
+            SELECT
+                to_char(date, 'Dy') AS day,
+                to_char(date, 'HH24') as hour,
+                SUM(free_spaces) AS frees,
+                SUM(used_spaces) AS useds
+            FROM
+                place_update
+            GROUP BY
+                to_char(date, 'Dy'),
+                to_char(date, 'HH24')
+        ) AS q
+        GROUP BY
+            day,
+            hour
+    """
+
+    result = list(app.sql_engine.execute(sql))
+
+    return flask.render_template('place.html', place=place, chart=result)
 
 
 def make_author():

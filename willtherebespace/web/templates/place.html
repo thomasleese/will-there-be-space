@@ -1,9 +1,40 @@
 {% extends '_base.html' %}
 
+{% block scripts %}
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+    google.load('visualization', '1.0', {'packages': ['corechart']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Time');
+      data.addColumn('number', 'Free Spaces');
+      data.addColumn('number', 'Used Spaces');
+      data.addRows([
+        {% for row in chart %}
+          ['{{ row[0] + ' ' + row[1] }}', {{ row[2] }}, {{ row[3] }}],
+        {% endfor %}
+      ]);
+
+      var options = {
+        height: 300,
+        isStacked: true,
+      };
+
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+      chart.draw(data, options);
+    }
+  </script>
+{% endblock %}
+
 {% block content %}
   <h1>{{ place.name }}</h1>
   <p>{{ place.description }}</p>
   <p>{{ place.location }}</p>
+
+  <h2>Chart</h2>
+  <div id="chart"></div>
 
   <h2>Updates</h2>
 
