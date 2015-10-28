@@ -6,11 +6,30 @@
   <p>{{ place.location }}</p>
 
   <h2>Updates</h2>
-  <ul>
-    {% for update in place.updates %}
-      <li>{{ update.free_spaces }} free spaces, {{ update.used_spaces }} used spaces - <small>{{ update.date }}</small></li>
-    {% endfor %}
-  </ul>
+
+  <table class="table table-striped">
+    <thead class="thead-default">
+      <tr>
+        <th>#</th>
+        <th>Free Spaces</th>
+        <th>Used Spaces</th>
+        <th>Date</th>
+        <th>Author</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for update in place.updates %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ update.free_spaces }}</td>
+          <td>{{ update.used_spaces }}</td>
+          <td>{{ update.date }}</td>
+          <td>{{ update.author.ip_address }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
   <a href="{{ url_for('.update_place', slug=place.slug) }}">Update</a>
 {% endblock %}
