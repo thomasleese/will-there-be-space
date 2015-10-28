@@ -48,8 +48,8 @@ def place(slug):
             SELECT
                 to_char(date, 'Dy') AS day,
                 to_char(date, 'HH24') as hour,
-                SUM(free_spaces) AS frees,
-                SUM(used_spaces) AS useds
+                AVG(free_spaces) AS frees,
+                AVG(used_spaces) AS useds
             FROM
                 place_update
             GROUP BY
