@@ -13,13 +13,16 @@
       data.addColumn('number', 'Used Spaces');
       data.addRows([
         {% for row in chart %}
-          ['{{ row[0] + ' ' + row[1] }}', {{ row[2] }}, {{ row[3] }}],
+          ['{{ ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][row[0]] }} {{ row[1] }}', {{ row[2] }}, {{ row[3] }}],
         {% endfor %}
       ]);
 
       var options = {
         height: 300,
         isStacked: true,
+        bar: {
+          groupWidth: '100%'
+        }
       };
 
       var chart = new google.visualization.ColumnChart(document.getElementById('chart'));

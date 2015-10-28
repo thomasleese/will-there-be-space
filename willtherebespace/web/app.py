@@ -1,6 +1,7 @@
 from cerberus import Validator
 import flask
 from werkzeug.contrib.fixers import ProxyFix
+import sqlalchemy.sql
 
 from .. import database
 from ..models import Author, Place, PlaceUpdate, _Session as SqlSession
@@ -40,30 +41,66 @@ def place(slug):
 
     sql = """
         SELECT
-            day,
-            hour,
-            AVG(frees) AS free,
-            AVG(useds) AS used
-        FROM (
-            SELECT
-                to_char(date, 'Dy') AS day,
-                to_char(date, 'HH24') as hour,
-                AVG(free_spaces) AS frees,
-                AVG(used_spaces) AS useds
-            FROM
-                place_update
-            GROUP BY
-                to_char(date, 'Dy'),
-                to_char(date, 'HH24')
-        ) AS q
+            to_char(date, 'ID') AS day,
+            to_char(date, 'HH24') as hour,
+            AVG(free_spaces) AS frees,
+            AVG(used_spaces) AS useds
+        FROM
+            place_update
+        WHERE
+            place_update.place_id = :place_id
         GROUP BY
-            day,
-            hour
+            to_char(date, 'ID'),
+            to_char(date, 'HH24')
     """
 
-    result = list(app.sql_engine.execute(sql))
+    free_results = {}
+    used_results = {}
 
-    return flask.render_template('place.html', place=place, chart=result)
+    for row in app.sql_engine.execute(sqlalchemy.sql.text(sql), place_id=place.id):
+        free_results[(int(row[0]) - 1, int(row[1]))] = row[2]
+        used_results[(int(row[0]) - 1, int(row[1]))] = row[3]
+
+    results = []
+
+    if free_results and used_results:
+        free_average = sum(x for x in free_results.values()) / len(free_results)
+        used_average = sum(x for x in used_results.values()) / len(used_results)
+
+        results = []
+        for day in range(7):
+            for hour in range(24):
+                free = free_results.get((day, hour))
+                used = used_results.get((day, hour))
+
+                if free is None:
+                    assert used is None
+                if used is None:
+                    assert free is None
+
+                if free is None or used is None:
+                    # try the day before
+                    day_before = day - 1
+                    while day_before != day:
+                        free_before = free_results.get((day_before, hour))
+                        used_before = used_results.get((day_before, hour))
+                        if free_before is not None and used_before is not None:
+                            free = free_before
+                            used = used_before
+                            break
+
+                        day_before -= 1
+                        if day_before < 0:
+                            day_before = 6
+
+                    if free is None or used is None:
+                        # average
+                        free = free_average
+                        used = used_average
+
+                results.append((day, hour, free, used))
+
+    return flask.render_template('place.html', place=place, chart=results)
 
 
 def make_author():
