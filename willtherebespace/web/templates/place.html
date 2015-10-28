@@ -1,3 +1,12 @@
 <h1>{{ place.name }}</h1>
 <p>{{ place.description }}</p>
 <p>{{ place.location }}</p>
+
+<h2>Updates</h2>
+<ul>
+  {% for update in place.updates %}
+    <li>{{ update.free_spaces }}:{{ update.used_spaces }}</li>
+  {% endfor %}
+</ul>
+
+<a href="{{ url_for('.update_place', slug=place.slug) }}">Update</a>

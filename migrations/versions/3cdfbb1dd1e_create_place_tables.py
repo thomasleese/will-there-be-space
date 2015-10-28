@@ -22,7 +22,6 @@ def upgrade():
         sa.Column('id', sa.Integer, primary_key=True, nullable=False),
         sa.Column('account_id', sa.Integer, nullable=True),
         sa.Column('ip_address', sa.String, nullable=False),
-        sa.Column('date', sa.DateTime, nullable=False),
     )
 
     op.create_table(
@@ -53,6 +52,7 @@ def upgrade():
                   nullable=False),
         sa.Column('author_id', sa.Integer, sa.ForeignKey('author.id'),
                   nullable=False),
+        sa.Column('date', sa.DateTime, nullable=False),
         sa.Column('column', sa.String, nullable=False),
         sa.Column('old_value', sa.String, nullable=False),
         sa.Column('new_value', sa.String, nullable=False),
@@ -67,7 +67,7 @@ def upgrade():
                   nullable=False),
         sa.Column('author_id', sa.Integer, sa.ForeignKey('author.id'),
                   nullable=False),
-        sa.Column('date', sa.DateTime, unique=True, nullable=False),
+        sa.Column('date', sa.DateTime, nullable=False),
         sa.Column('used_spaces', sa.Integer, nullable=False),
         sa.Column('free_spaces', sa.Integer, nullable=False),
         sa.Column('approval_id', sa.Integer, sa.ForeignKey('approval.id'),
@@ -77,5 +77,7 @@ def upgrade():
 
 def downgrade():
     op.drop_table('place_update')
+    op.drop_table('place_change')
     op.drop_table('place')
+    op.drop_table('approval')
     op.drop_table('author')

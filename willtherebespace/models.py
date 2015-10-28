@@ -1,5 +1,6 @@
 """Models."""
 
+import datetime
 import hashlib
 import os
 
@@ -28,5 +29,29 @@ def generate_key(length=512):
     return h.hexdigest()
 
 
+class Author(_Base):
+    __tablename__ = 'author'
+
+    def __init__(self, ip_address, account=None):
+        self.account = account
+        self.ip_address = ip_address
+
+
 class Place(_Base):
     __tablename__ = 'place'
+
+    author = relationship('Author', backref=backref('places'))
+
+
+class PlaceUpdate(_Base):
+    __tablename__ = 'place_update'
+
+    author = relationship('Author', backref=backref('place_updates'))
+    place = relationship('Place', backref=backref('updates'))
+
+    def __init__(self, used_spaces, free_spaces, author, place=None):
+        self.used_spaces = used_spaces
+        self.free_spaces = free_spaces
+        self.author = author
+        self.place = place
+        self.date = datetime.datetime.now()

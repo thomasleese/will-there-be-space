@@ -1,10 +1,13 @@
+from cerberus import Validator
 import flask
+from werkzeug.contrib.fixers import ProxyFix
 
 from .. import database
-from ..models import Place, _Session as SqlSession
+from ..models import Author, Place, PlaceUpdate, _Session as SqlSession
 
 
 app = flask.Flask('willtherebespace.web')
+app.wsgi_app = ProxyFix(app.wsgi_app)
 
 
 @app.before_first_request
@@ -24,7 +27,7 @@ def remove_session(*args, **kwargs):
 
 
 @app.route('/')
-def hello():
+def home():
     places = flask.g.sql_session.query(Place).all()
     return flask.render_template('places.html', places=places)
 
@@ -35,3 +38,36 @@ def place(slug):
         .filter(Place.slug == slug) \
         .one()
     return flask.render_template('place.html', place=place)
+
+
+def make_author():
+    return Author(flask.request.remote_addr)
+
+
+@app.route('/in/<slug>/update', methods=['GET', 'POST'])
+def update_place(slug):
+    place = flask.g.sql_session.query(Place) \
+        .filter(Place.slug == slug) \
+        .one()
+
+    if flask.request.method == 'POST':
+        # TODO add >0 checking
+        v = Validator({
+            'free': {'type': 'integer', 'coerce': int, 'required': True},
+            'used': {'type': 'integer', 'coerce': int, 'required': True},
+        })
+
+        form = dict(flask.request.form.items())
+        if v.validate(form):
+            author = make_author()
+            update = PlaceUpdate(v.document['used'], v.document['free'],
+                                 author, place=place)
+
+            flask.g.sql_session.add(update)
+            flask.g.sql_session.commit()
+            return flask.redirect(flask.url_for('.place', slug=place.slug))
+        else:
+            print(v.errors)
+            return flask.render_template('place/update.html', place=place)
+
+    return flask.render_template('place/update.html', place=place)

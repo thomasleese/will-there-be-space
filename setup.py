@@ -17,6 +17,7 @@ setup(
     ],
     install_requires=[
         'alembic',
+        'cerberus',
         'Flask',
         'gunicorn',
         'passlib',
