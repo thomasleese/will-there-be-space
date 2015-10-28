@@ -5,7 +5,7 @@
 <h2>Updates</h2>
 <ul>
   {% for update in place.updates %}
-    <li>{{ update.free_spaces }}:{{ update.used_spaces }}</li>
+    <li>{{ update.free_spaces }} free spaces, {{ update.used_spaces }} used spaces - <small>{{ update.date }}</small></li>
   {% endfor %}
 </ul>
 
