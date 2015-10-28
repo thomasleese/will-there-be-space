@@ -31,4 +31,7 @@ def hello():
 
 @app.route('/in/<slug>')
 def place(slug):
-    return 'I doubt it.'
+    place = flask.g.sql_session.query(Place) \
+        .filter(Place.slug == slug) \
+        .one()
+    return flask.render_template('place.html', place=place)
