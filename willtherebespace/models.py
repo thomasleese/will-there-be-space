@@ -37,10 +37,21 @@ class Author(_Base):
         self.ip_address = ip_address
 
 
+def slugify(string):
+    return string.replace(' ', '-').lower()
+
+
 class Place(_Base):
     __tablename__ = 'place'
 
     author = relationship('Author', backref=backref('places'))
+
+    def __init__(self, name, description, location, author):
+        self.name = name
+        self.description = description
+        self.location = location
+        self.slug = slugify(name)
+        self.author = author
 
 
 class PlaceUpdate(_Base):

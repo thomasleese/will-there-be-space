@@ -44,6 +44,28 @@ def make_author():
     return Author(flask.request.remote_addr)
 
 
+@app.route('/new_place', methods=['GET', 'POST'])
+def new_place():
+    if flask.request.method == 'POST':
+        v = Validator({
+            'name': {'type': 'string', 'minlength': 3},
+            'description': {'type': 'string', 'required': True},
+            'location': {'type': 'string', 'required': True},
+        })
+
+        form = dict(flask.request.form.items())
+        if v.validate(form):
+            author = make_author()
+            place = Place(v.document['name'], v.document['description'],
+                          v.document['location'], author)
+            flask.g.sql_session.add(place)
+            flask.g.sql_session.commit()
+            return flask.redirect(flask.url_for('.place', slug=place.slug))
+        else:
+            return flask.render_template('place/new.html', errors=v.errors)
+    return flask.render_template('place/new.html')
+
+
 @app.route('/in/<slug>/update', methods=['GET', 'POST'])
 def update_place(slug):
     place = flask.g.sql_session.query(Place) \

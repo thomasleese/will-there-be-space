@@ -10,8 +10,14 @@
   </head>
 
   <body>
-    {% block content %}
-    {% endblock %}
+    <nav class="navbar navbar-dark bg-inverse navbar-fixed-top">
+      <a class="navbar-brand" href="{{ url_for('.home') }}">Will there be space?</a>
+    </nav>
+
+    <div class="container" style="margin-top: 100px;">
+      {% block content %}
+      {% endblock %}
+    </div>
 
     <script src="{{ url_for('static', filename='scripts/bootstrap.min.js') }}"></script>
   </body>

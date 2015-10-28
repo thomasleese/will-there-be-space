@@ -1,0 +1,33 @@
+{% extends '_base.html' %}
+
+{% block content %}
+  <h1>New Place</h1>
+
+  <form method="POST">
+    <div class="form-group {% if 'name' in errors %}has-error{% endif %}">
+      <label for="formPlaceName">Name</label>
+      <input class="form-control" type="text" name="name" id="formPlaceName" />
+      {% if 'name' in errors %}
+        <p class="help-text">{{ errors['name'] }}</p>
+      {% endif %}
+    </div>
+
+    <div class="form-group {% if 'description' in errors %}has-error{% endif %}">
+      <label for="formPlaceDescription">Description</label>
+      <input class="form-control" type="text" name="description" id="formPlaceDescription" />
+      {% if 'description' in errors %}
+        <p class="help-text">{{ errors['description'] }}</p>
+      {% endif %}
+    </div>
+
+    <div class="form-group {% if 'location' in errors %}has-error{% endif %}">
+      <label for="formPlaceLocation">Location</label>
+      <input class="form-control" type="text" name="location" id="formPlaceLocation" />
+      {% if 'location' in errors %}
+        <p class="help-text">{{ errors['location'] }}</p>
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+{% endblock %}

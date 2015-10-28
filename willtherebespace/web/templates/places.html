@@ -1,9 +1,14 @@
 {% extends '_base.html' %}
 
 {% block content %}
-  <ul>
-    {% for place in places %}
-      <li><a href="{{ url_for('place', slug=place.slug) }}">{{ place.name }}</a></li>
-    {% endfor %}
-  </ul>
+  {% for place in places %}
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title"><a href="{{ url_for('.place', slug=place.slug) }}">{{ place.name }}</a></h4>
+        <p class="card-text">{{ place.description }}</p>
+      </div>
+    </div>
+  {% endfor %}
+
+  <a class="btn btn-primary" href="{{ url_for('.new_place') }}">New Place</a>
 {% endblock %}
