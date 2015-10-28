@@ -1,5 +1,5 @@
 <ul>
   {% for place in places %}
-    <li>{{ place.name }}</li>
+    <li><a href="{{ url_for('place', slug=place.slug) }}">{{ place.name }}</a></li>
   {% endfor %}
 </ul>

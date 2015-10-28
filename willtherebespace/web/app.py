@@ -29,6 +29,6 @@ def hello():
     return flask.render_template('places.html', places=places)
 
 
-@app.route('/in/<place_name>')
-def place(place_name):
+@app.route('/in/<slug>')
+def place(slug):
     return 'I doubt it.'
