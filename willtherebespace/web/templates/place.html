@@ -1,12 +1,16 @@
-<h1>{{ place.name }}</h1>
-<p>{{ place.description }}</p>
-<p>{{ place.location }}</p>
+{% extends '_base.html' %}
 
-<h2>Updates</h2>
-<ul>
-  {% for update in place.updates %}
-    <li>{{ update.free_spaces }} free spaces, {{ update.used_spaces }} used spaces - <small>{{ update.date }}</small></li>
-  {% endfor %}
-</ul>
+{% block content %}
+  <h1>{{ place.name }}</h1>
+  <p>{{ place.description }}</p>
+  <p>{{ place.location }}</p>
 
-<a href="{{ url_for('.update_place', slug=place.slug) }}">Update</a>
+  <h2>Updates</h2>
+  <ul>
+    {% for update in place.updates %}
+      <li>{{ update.free_spaces }} free spaces, {{ update.used_spaces }} used spaces - <small>{{ update.date }}</small></li>
+    {% endfor %}
+  </ul>
+
+  <a href="{{ url_for('.update_place', slug=place.slug) }}">Update</a>
+{% endblock %}

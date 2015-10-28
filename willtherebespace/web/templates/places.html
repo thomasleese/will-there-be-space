@@ -1,5 +1,9 @@
-<ul>
-  {% for place in places %}
-    <li><a href="{{ url_for('place', slug=place.slug) }}">{{ place.name }}</a></li>
-  {% endfor %}
-</ul>
+{% extends '_base.html' %}
+
+{% block content %}
+  <ul>
+    {% for place in places %}
+      <li><a href="{{ url_for('place', slug=place.slug) }}">{{ place.name }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}
