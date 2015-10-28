@@ -5,11 +5,15 @@
     <meta charset="UTF-8" />
 
     <title>Will there be space?</title>
+
+    <link href="{{ url_for('static', filename='styles/bootstrap.min.css') }}" rel="stylesheet" />
   </head>
 
   <body>
     {% block content %}
     {% endblock %}
+
+    <script src="{{ url_for('static', filename='scripts/bootstrap.min.js') }}"></script>
   </body>
 
 </html>
