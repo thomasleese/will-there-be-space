@@ -13,7 +13,7 @@
       data.addColumn('number', 'Used Spaces');
       data.addRows([
         {% for row in chart %}
-          ['{{ ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][row[0]] }} {{ row[1] }}', {{ row[2] }}, {{ row[3] }}],
+          ['{{ ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][row[0]] }} {{ row[1] }}h', {{ row[2] }}, {{ row[3] }}],
         {% endfor %}
       ]);
 
