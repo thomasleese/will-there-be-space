@@ -34,7 +34,7 @@ def remove_session(*args, **kwargs):
 @app.route('/')
 def home():
     places = flask.g.sql_session.query(Place).all()
-    return flask.render_template('places.html', places=places)
+    return flask.render_template('place/index.html', places=places)
 
 
 @app.route('/in/<slug>', methods=['GET', 'POST'])
@@ -58,11 +58,10 @@ def place(slug):
             flask.g.sql_session.commit()
             return flask.redirect(flask.url_for('.place', slug=place.slug))
         else:
-            return flask.render_template('place.html', place=place,
+            return flask.render_template('place/view.html', place=place,
                                          errors=v.errors)
     else:
-        chart = place.busyness_chart
-        return flask.render_template('place.html', place=place, chart=chart)
+        return flask.render_template('place/view.html', place=place)
 
 
 def make_author():

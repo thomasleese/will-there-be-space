@@ -1,5 +1,7 @@
 {% extends '_base.html' %}
 
+{% set chart = place.busyness_chart %}
+
 {% block scripts %}
   {% if chart is not none %}
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -66,7 +68,7 @@
       <div class="card-block">
         <div id="chart"></div>
         <br />
-        <p class="card-text text-center">Usually around this time, it’s <strong>{{ place.scale.get_text(chart.now) }}</strong>.</p>
+        <p class="card-text text-center lead">Right now, {{ place.name }} is probably <strong>{{ place.scale.get_text(chart.now) }}</strong>.</p>
       </div>
     </div>
   {% endif %}
