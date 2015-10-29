@@ -46,7 +46,7 @@ class BusynessChart:
 
         self.raw_week = ContinousWeek()
         for row in raw_results:
-            self.raw_week.set(int(row[0]), int(row[1]), row[2])
+            self.raw_week.set(int(row[0]) - 1, int(row[1]), row[2])
 
         if not self.raw_week.data:
             raise ValueError('There are no results so a chart cannot be '
