@@ -21,6 +21,9 @@
         isStacked: true,
         bar: {
           groupWidth: '100%'
+        },
+        legend: {
+          position: 'none'
         }
       };
 
@@ -31,46 +34,85 @@
 {% endblock %}
 
 {% block content %}
-  <h1>{{ place.name }}</h1>
-  <p class="lead">{{ place.description }}</p>
-  <p class="text-muted">{{ place.location }}</p>
+  <div class="row">
+    <div class="col-sm-9">
+      <h1>{{ place.name }}</h1>
+      <p class="lead">{{ place.description }}</p>
+      <p class="text-muted">{{ place.location }}</p>
+    </div>
 
-  {% if now_free and now_used %}
-    <div class="card" style="width: 60%; margin: auto;">
+    <div class="col-sm-3">
+      <h5>How busy is it now?</h5>
+
+      <form method="POST">
+        <div class="form-group">
+          <input type="range" id="busyness" value="0" name="busyness" min="0" max="10" placeholder="Busyness" oninput="amount.value=busyness.value" />
+          <output name="amount" for="busyness">0</output>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+      </form>
+    </div>
+  </div>
+
+  {% if now_busyness is defined %}
+    <div class="card">
       <div class="card-block">
-        <p class="card-text">Usually around this time, it is <strong>{{ now_busyness * 100 | round(0) }}% busy</strong>.</p>
+        <div id="chart"></div>
+        <br />
+        <p class="card-text text-center">Usually around this time, it is <strong>{{ (now_busyness * 10) | round }}% busy</strong>.</p>
       </div>
     </div>
   {% endif %}
 
-  <br />
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-block">
+          <h4 class="card-title">Latest Updates</h4>
+        </div>
 
-  <h2>Chart</h2>
-  <div id="chart"></div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Busyness</th>
+              <th>Date</th>
+              <th>Author</th>
+            </tr>
+          </thead>
 
-  <h2>Latest Updates</h2>
+          <tbody>
+            {% for update in place.updates | islice(10) %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ update.busyness }}</td>
+                <td>{{ update.date }}</td>
+                <td>{{ update.author.ip_address }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-  <table class="table table-striped">
-    <thead class="thead-default">
-      <tr>
-        <th>#</th>
-        <th>Busyness</th>
-        <th>Date</th>
-        <th>Author</th>
-      </tr>
-    </thead>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-block">
+          <h4 class="card-title">Scale</h4>
+        </div>
 
-    <tbody>
-      {% for update in place.updates | islice(10) %}
-        <tr>
-          <td>{{ loop.index }}</td>
-          <td>{{ update.busyness }}</td>
-          <td>{{ update.date }}</td>
-          <td>{{ update.author.ip_address }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <a class="btn btn-primary" href="{{ url_for('.update_place', slug=place.slug) }}">Post update</a>
+        <table class="table">
+          <tbody>
+            {% for i in range(11) %}
+              <tr>
+                <th>{{ i }}</th>
+                <td>{{ place.scale['text_{}'.format(i)] }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 {% endblock %}

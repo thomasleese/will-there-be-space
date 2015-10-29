@@ -39,66 +39,84 @@ def home():
     return flask.render_template('places.html', places=places)
 
 
-@app.route('/in/<slug>')
+@app.route('/in/<slug>', methods=['GET', 'POST'])
 def place(slug):
     place = flask.g.sql_session.query(Place) \
         .filter(Place.slug == slug) \
         .one()
 
-    sql = """
-        SELECT
-            to_char(date, 'ID') AS day,
-            to_char(date, 'HH24') as hour,
-            AVG(busyness) AS busyness
-        FROM
-            place_update
-        WHERE
-            place_update.place_id = :place_id
-        GROUP BY
-            to_char(date, 'ID'),
-            to_char(date, 'HH24')
-    """
+    if flask.request.method == 'POST':
+        v = Validator({
+            'busyness': {'type': 'integer', 'coerce': int, 'required': True,
+                         'min': 0, 'max': 10},
+        })
 
-    raw_results = {}
-    for row in app.sql_engine.execute(sqlalchemy.sql.text(sql), place_id=place.id):
-        raw_results[(int(row[0]) - 1, int(row[1]))] = row[2]
+        form = dict(flask.request.form.items())
+        if v.validate(form):
+            author = make_author()
+            update = PlaceUpdate(v.document['busyness'], author, place=place)
 
-    results = []
-    dict_results = {}
+            flask.g.sql_session.add(update)
+            flask.g.sql_session.commit()
+            return flask.redirect(flask.url_for('.place', slug=place.slug))
+        else:
+            return flask.render_template('place.html', place=place,
+                                         errors=v.errors)
+    else:
+        sql = """
+            SELECT
+                to_char(date, 'ID') AS day,
+                to_char(date, 'HH24') as hour,
+                AVG(busyness) AS busyness
+            FROM
+                place_update
+            WHERE
+                place_update.place_id = :place_id
+            GROUP BY
+                to_char(date, 'ID'),
+                to_char(date, 'HH24')
+        """
 
-    if raw_results:
-        average = sum(x for x in raw_results.values()) / len(raw_results)
+        raw_results = {}
+        for row in app.sql_engine.execute(sqlalchemy.sql.text(sql), place_id=place.id):
+            raw_results[(int(row[0]) - 1, int(row[1]))] = row[2]
 
         results = []
-        for day in range(7):
-            for hour in range(24):
-                busyness = raw_results.get((day, hour))
+        dict_results = {}
 
-                if busyness is None:
-                    # try the day before
-                    day_before = day - 1
-                    while day_before != day:
-                        busyness_before = raw_results.get((day_before, hour))
-                        if busyness_before is not None:
-                            busyness = busyness_before
-                            break
+        if raw_results:
+            average = sum(x for x in raw_results.values()) / len(raw_results)
 
-                        day_before -= 1
-                        if day_before < 0:
-                            day_before = 6
+            results = []
+            for day in range(7):
+                for hour in range(24):
+                    busyness = raw_results.get((day, hour))
 
                     if busyness is None:
-                        # average
-                        busyness = average
+                        # try the day before
+                        day_before = day - 1
+                        while day_before != day:
+                            busyness_before = raw_results.get((day_before, hour))
+                            if busyness_before is not None:
+                                busyness = busyness_before
+                                break
 
-                dict_results[(day, hour)] = busyness
-                results.append((day, hour, busyness))
+                            day_before -= 1
+                            if day_before < 0:
+                                day_before = 6
 
-    now = datetime.datetime.now()
-    now_results = dict_results.get((now.weekday(), now.hour))
+                        if busyness is None:
+                            # average
+                            busyness = average
 
-    return flask.render_template('place.html', place=place, chart=results,
-                                 now_busyness=now_results)
+                    dict_results[(day, hour)] = busyness
+                    results.append((day, hour, busyness))
+
+        now = datetime.datetime.now()
+        now_results = dict_results.get((now.weekday(), now.hour))
+
+        return flask.render_template('place.html', place=place, chart=results,
+                                     now_busyness=now_results)
 
 
 def make_author():
@@ -126,30 +144,3 @@ def new_place():
         else:
             return flask.render_template('place/new.html', errors=v.errors)
     return flask.render_template('place/new.html')
-
-
-@app.route('/in/<slug>/update', methods=['GET', 'POST'])
-def update_place(slug):
-    place = flask.g.sql_session.query(Place) \
-        .filter(Place.slug == slug) \
-        .one()
-
-    if flask.request.method == 'POST':
-        # TODO add >0 checking
-        v = Validator({
-            'busyness': {'type': 'integer', 'coerce': int, 'required': True, 'min': 0, 'max': 10},
-        })
-
-        form = dict(flask.request.form.items())
-        if v.validate(form):
-            author = make_author()
-            update = PlaceUpdate(v.document['busyness'], author, place=place)
-
-            flask.g.sql_session.add(update)
-            flask.g.sql_session.commit()
-            return flask.redirect(flask.url_for('.place', slug=place.slug))
-        else:
-            print(v.errors)
-            return flask.render_template('place/update.html', place=place)
-
-    return flask.render_template('place/update.html', place=place)
