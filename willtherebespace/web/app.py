@@ -1,7 +1,9 @@
 import itertools
+import os
 
 from cerberus import Validator
 import flask
+import requests
 from werkzeug.contrib.fixers import ProxyFix
 
 from .. import database
@@ -19,6 +21,7 @@ app.jinja_env.filters['islice'] = itertools.islice
 def configure_database():
     app.sql_engine = database.get_sql_engine()
     app.sql_connection = database.get_sql_connection()
+    app.logger.info('Connected to database.')
 
 
 @app.before_request
@@ -37,6 +40,19 @@ def home():
     return flask.render_template('place/index.html', places=places)
 
 
+def check_recaptcha():
+    payload = {
+        'secret': os.environ['RECAPTCHA_SECRET'],
+        'response': flask.request.form['g-recaptcha-response'],
+    }
+    app.logger.debug('Testing Recaptcha response.')
+    req = requests.post('https://www.google.com/recaptcha/api/siteverify',
+                        data=payload)
+    json = req.json()
+    app.logger.debug(str(json))
+    return json['success']
+
+
 @app.route('/in/<slug>', methods=['GET', 'POST'])
 def place(slug):
     place = flask.g.sql_session.query(Place) \
@@ -50,7 +66,9 @@ def place(slug):
         })
 
         form = dict(flask.request.form.items())
-        if v.validate(form):
+        del form['g-recaptcha-response']
+
+        if check_recaptcha() and v.validate(form):
             author = make_author()
             update = PlaceUpdate(v.document['busyness'], author, place=place)
 
@@ -78,7 +96,9 @@ def new_place():
         })
 
         form = dict(flask.request.form.items())
-        if v.validate(form):
+        del form['g-recaptcha-response']
+
+        if check_recaptcha() and v.validate(form):
             author = make_author()
             place = Place(v.document['name'], v.document['description'],
                           v.document['location'], author)

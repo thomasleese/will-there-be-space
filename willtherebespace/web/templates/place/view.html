@@ -2,6 +2,14 @@
 
 {% set chart = place.busyness_chart %}
 
+{% block head %}
+  <style>
+    .g-recaptcha > div > div {
+      margin: auto;
+    }
+  </style>
+{% endblock %}
+
 {% block scripts %}
   {% if chart is not none %}
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -49,12 +57,17 @@
           <h5 class="card-title">How busy is it now?</h5>
 
           <form method="POST">
-            <div class="form-group">
-              <input type="range" id="busyness" value="0" name="busyness" min="0" max="10" placeholder="Busyness" oninput="amount.value=busyness.value" />
-              <output name="amount" for="busyness">0</output>
+            <div class="form-group row">
+              <div class="col-sm-10">
+                <input class="form-control" type="range" value="0" name="busyness" min="0" max="10" placeholder="Busyness" oninput="amount.value=document.getElementById('busyness').value=busyness.value" />
+              </div>
+
+              <div class="col-sm-2">
+                <strong><output name="amount" for="busyness">0</output></strong>
+              </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateFormModal">Post update</button>
           </form>
         </div>
       </div>
@@ -118,6 +131,25 @@
             {% endfor %}
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="updateFormModal" tabindex="-1" role="dialog" aria-labelledby="updateFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body p-t-lg p-b-lg">
+          <form method="POST" id="updateForm">
+            <input id="busyness" type="hidden" name="busyness" />
+
+            <div class="g-recaptcha m-b-lg" data-sitekey="6LeD0A8TAAAAAHilJ-3uBY_2y58Gxu561r1VEofU"></div>
+
+            <div class="text-center m-t-lg">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary" form="updateForm">Continue</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

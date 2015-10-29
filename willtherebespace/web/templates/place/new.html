@@ -6,7 +6,7 @@
   <form method="POST">
     <div class="form-group {% if 'name' in errors %}has-error{% endif %}">
       <label for="formPlaceName">Name</label>
-      <input class="form-control" type="text" name="name" id="formPlaceName" />
+      <input class="form-control" type="text" name="name" id="formPlaceName" value="{{ request.form['name'] }}" />
       {% if 'name' in errors %}
         <p class="help-text">{{ errors['name'] }}</p>
       {% endif %}
@@ -14,7 +14,7 @@
 
     <div class="form-group {% if 'description' in errors %}has-error{% endif %}">
       <label for="formPlaceDescription">Description</label>
-      <input class="form-control" type="text" name="description" id="formPlaceDescription" />
+      <input class="form-control" type="text" name="description" id="formPlaceDescription" value="{{ request.form['description'] }}" />
       {% if 'description' in errors %}
         <p class="help-text">{{ errors['description'] }}</p>
       {% endif %}
@@ -22,11 +22,13 @@
 
     <div class="form-group {% if 'location' in errors %}has-error{% endif %}">
       <label for="formPlaceLocation">Location</label>
-      <input class="form-control" type="text" name="location" id="formPlaceLocation" />
+      <input class="form-control" type="text" name="location" id="formPlaceLocation" value="{{ request.form['location'] }}" />
       {% if 'location' in errors %}
         <p class="help-text">{{ errors['location'] }}</p>
       {% endif %}
     </div>
+
+    <div class="g-recaptcha m-b" data-sitekey="6LeD0A8TAAAAAHilJ-3uBY_2y58Gxu561r1VEofU"></div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>

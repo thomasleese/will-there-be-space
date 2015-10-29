@@ -20,6 +20,7 @@ setup(
         'cerberus',
         'Flask',
         'gunicorn',
+        'requests',
         'passlib',
         'psycopg2',
         'SQLAlchemy',
