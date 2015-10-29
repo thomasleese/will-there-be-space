@@ -10,12 +10,10 @@
       google.setOnLoadCallback(drawChart);
 
       function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Time');
-        data.addColumn('number', 'Busyness');
-        data.addRows([
+        var data = google.visualization.arrayToDataTable([
+          ['Time', 'Busyness', {role: 'style'}],
           {% for row in chart.rows %}
-            ['{{ row[0] }} {{ row[1] }}h', {{ row[2] }}],
+            ['{{ row[0] }} {{ row[1] }}h', {{ row[2] }}, '{{ place.scale.get_colour(row[2]) }}'],
           {% endfor %}
         ]);
 
@@ -23,7 +21,7 @@
           height: 300,
           isStacked: true,
           bar: {
-            groupWidth: '100%'
+            groupWidth: '85%'
           },
           legend: {
             position: 'none'
@@ -68,7 +66,7 @@
       <div class="card-block">
         <div id="chart"></div>
         <br />
-        <p class="card-text text-center lead">Right now, {{ place.name }} is probably <strong>{{ place.scale.get_text(chart.now) }}</strong>.</p>
+        <p class="card-text text-center lead">Right now, {{ place.name }} is probably <strong style="color: {{ place.scale.get_colour(chart.now) }}">{{ place.scale.get_text(chart.now) }}</strong>.</p>
       </div>
     </div>
   {% endif %}
@@ -115,7 +113,7 @@
             {% for i in range(11) %}
               <tr>
                 <th>{{ i }}</th>
-                <td>{{ place.scale['text_{}'.format(i)] }}</td>
+                <td style="color: {{ place.scale.get_colour(i) }}">{{ place.scale.get_text(i) }}</td>
               </tr>
             {% endfor %}
           </tbody>

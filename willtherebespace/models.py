@@ -99,8 +99,18 @@ class PlaceScale(_Base):
 
     def get_text(self, index):
         if index < 0 or index > 10:
-            raise ValueError('Invalid index.')
+            raise IndexError(index)
         return getattr(self, 'text_{}'.format(index))
+
+    def get_colour(self, index):
+        if 0 <= index <= 5:
+            return '#5cb85c'
+        elif 5 < index <= 8:
+            return '#f0ad4e'
+        elif 8 < index <= 10:
+            return '#d9534f'
+        else:
+            raise IndexError(index)
 
 
 class PlaceUpdate(_Base):
