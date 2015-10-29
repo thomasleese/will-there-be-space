@@ -92,7 +92,7 @@ class BusynessChart:
         left_value, left_distance = find_value(day, hour, -1)
         right_value, right_distance = find_value(day, hour, +1)
 
-        a = left_distance / (left_distance + right_distance + 1)
+        a = left_distance / (left_distance + right_distance)
         return left_value * (1 - a) + right_value * a
 
     @property
