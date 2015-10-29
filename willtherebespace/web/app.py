@@ -1,10 +1,8 @@
-import datetime
 import itertools
 
 from cerberus import Validator
 import flask
 from werkzeug.contrib.fixers import ProxyFix
-import sqlalchemy.sql
 
 from .. import database
 from ..models import Author, Place, PlaceScale, PlaceUpdate, \
@@ -63,60 +61,11 @@ def place(slug):
             return flask.render_template('place.html', place=place,
                                          errors=v.errors)
     else:
-        sql = """
-            SELECT
-                to_char(date, 'ID') AS day,
-                to_char(date, 'HH24') as hour,
-                AVG(busyness) AS busyness
-            FROM
-                place_update
-            WHERE
-                place_update.place_id = :place_id
-            GROUP BY
-                to_char(date, 'ID'),
-                to_char(date, 'HH24')
-        """
+        chart = place.busyness_chart
 
-        raw_results = {}
-        for row in app.sql_engine.execute(sqlalchemy.sql.text(sql), place_id=place.id):
-            raw_results[(int(row[0]) - 1, int(row[1]))] = row[2]
-
-        results = []
-        dict_results = {}
-
-        if raw_results:
-            average = sum(x for x in raw_results.values()) / len(raw_results)
-
-            results = []
-            for day in range(7):
-                for hour in range(24):
-                    busyness = raw_results.get((day, hour))
-
-                    if busyness is None:
-                        # try the day before
-                        day_before = day - 1
-                        while day_before != day:
-                            busyness_before = raw_results.get((day_before, hour))
-                            if busyness_before is not None:
-                                busyness = busyness_before
-                                break
-
-                            day_before -= 1
-                            if day_before < 0:
-                                day_before = 6
-
-                        if busyness is None:
-                            # average
-                            busyness = average
-
-                    dict_results[(day, hour)] = busyness
-                    results.append((day, hour, busyness))
-
-        now = datetime.datetime.now()
-        now_results = dict_results.get((now.weekday(), now.hour))
-
-        return flask.render_template('place.html', place=place, chart=results,
-                                     now_busyness=now_results)
+        return flask.render_template('place.html', place=place,
+                                     chart=chart.results,
+                                     now_busyness=chart.now_results)
 
 
 def make_author():

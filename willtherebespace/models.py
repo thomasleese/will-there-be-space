@@ -4,11 +4,11 @@ import datetime
 import hashlib
 import os
 
-from sqlalchemy import event, Column, String
 from sqlalchemy.orm import backref, scoped_session, sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base, DeferredReflection
-from sqlalchemy.ext.hybrid import hybrid_property
 from passlib.context import CryptContext
+
+from .chart import BusynessChart
 
 
 _Base = declarative_base(cls=DeferredReflection)
@@ -53,6 +53,30 @@ class Place(_Base):
         self.location = location
         self.slug = slugify(name)
         self.author = author
+
+    @property
+    def busyness_chart(self):
+        sql = """
+            SELECT
+                to_char(date, 'ID') AS day,
+                to_char(date, 'HH24') as hour,
+                AVG(busyness) AS busyness
+            FROM
+                place_update
+            WHERE
+                place_update.place_id = :place_id
+            GROUP BY
+                to_char(date, 'ID'),
+                to_char(date, 'HH24')
+        """
+
+        session = _Session.object_session(self)
+
+        raw_results = {}
+        for row in session.execute(sql, {'place_id': self.id}):
+            raw_results[(int(row[0]) - 1, int(row[1]))] = row[2]
+
+        return BusynessChart(raw_results)
 
 
 class PlaceScale(_Base):
