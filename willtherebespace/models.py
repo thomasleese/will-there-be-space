@@ -85,17 +85,23 @@ class PlaceScale(_Base):
     place = relationship('Place', backref=backref('scale', uselist=False))
 
     def __init__(self):
-        self.text_0 = 'Empty'
-        self.text_1 = 'Very empty'
-        self.text_2 = 'Fairly empty'
-        self.text_3 = 'Reasonably empty'
-        self.text_4 = 'Almost half full'
-        self.text_5 = 'Half full'
-        self.text_6 = 'Just over half full'
-        self.text_7 = 'Reasonably full'
-        self.text_8 = 'Fairly full'
-        self.text_9 = 'Very full'
-        self.text_10 = 'Full'
+        self.text_0 = 'empty'
+        self.text_1 = 'very empty'
+        self.text_2 = 'fairly empty'
+        self.text_3 = 'reasonably empty'
+        self.text_4 = 'almost half full'
+        self.text_5 = 'half full'
+        self.text_6 = 'just over half full'
+        self.text_7 = 'reasonably full'
+        self.text_8 = 'fairly full'
+        self.text_9 = 'very full'
+        self.text_10 = 'full'
+
+    def get_text(self, index):
+        if index < 0 or index > 10:
+            raise ValueError('Invalid index.')
+        return getattr(self, 'text_{}'.format(index))
+
 
 class PlaceUpdate(_Base):
     __tablename__ = 'place_update'

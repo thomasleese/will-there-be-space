@@ -75,7 +75,7 @@ class BusynessChart:
             for hour in range(24):
                 busyness = self.raw_week.get(day, hour)
                 if busyness is None:
-                    busyness = self.interpolate(day, hour)
+                    busyness = round(self.interpolate(day, hour), 1)
 
                 self.week.set(day, hour, busyness)
 
@@ -95,14 +95,15 @@ class BusynessChart:
         a = left_distance / (left_distance + right_distance + 1)
         return left_value * (1 - a) + right_value * a
 
-    def as_list(self):
-        results = []
-        for day in range(7):
-            for hour in range(24):
-                results.append((day, hour, self.week.get(day, hour)))
-        return results
-
     @property
     def now(self):
         d = datetime.datetime.now()
-        return self.week.get(d.weekday(), d.hour)
+        return round(self.week.get(d.weekday(), d.hour))
+
+    @property
+    def rows(self):
+        days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+        for day, day_name in enumerate(days):
+            for hour in range(24):
+                yield day_name, hour, self.week.get(day, hour)

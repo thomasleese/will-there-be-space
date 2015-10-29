@@ -1,40 +1,42 @@
 {% extends '_base.html' %}
 
 {% block scripts %}
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript">
-    google.load('visualization', '1.0', {'packages': ['corechart']});
-    google.setOnLoadCallback(drawChart);
+  {% if chart is not none %}
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1.0', {'packages': ['corechart']});
+      google.setOnLoadCallback(drawChart);
 
-    function drawChart() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Time');
-      data.addColumn('number', 'Busyness');
-      data.addRows([
-        {% for row in chart %}
-          ['{{ ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][row[0]] }} {{ row[1] }}h', {{ row[2] }}],
-        {% endfor %}
-      ]);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Time');
+        data.addColumn('number', 'Busyness');
+        data.addRows([
+          {% for row in chart.rows %}
+            ['{{ row[0] }} {{ row[1] }}h', {{ row[2] }}],
+          {% endfor %}
+        ]);
 
-      var options = {
-        height: 300,
-        isStacked: true,
-        bar: {
-          groupWidth: '100%'
-        },
-        legend: {
-          position: 'none'
-        }
-      };
+        var options = {
+          height: 300,
+          isStacked: true,
+          bar: {
+            groupWidth: '100%'
+          },
+          legend: {
+            position: 'none'
+          }
+        };
 
-      var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
-      chart.draw(data, options);
-    }
-  </script>
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+        chart.draw(data, options);
+      }
+    </script>
+  {% endif %}
 {% endblock %}
 
 {% block content %}
-  <div class="row">
+  <div class="row m-b">
     <div class="col-sm-9">
       <h1>{{ place.name }}</h1>
       <p class="lead">{{ place.description }}</p>
@@ -42,25 +44,29 @@
     </div>
 
     <div class="col-sm-3">
-      <h5>How busy is it now?</h5>
+      <div class="card">
+        <div class="card-block">
+          <h5 class="card-title">How busy is it now?</h5>
 
-      <form method="POST">
-        <div class="form-group">
-          <input type="range" id="busyness" value="0" name="busyness" min="0" max="10" placeholder="Busyness" oninput="amount.value=busyness.value" />
-          <output name="amount" for="busyness">0</output>
+          <form method="POST">
+            <div class="form-group">
+              <input type="range" id="busyness" value="0" name="busyness" min="0" max="10" placeholder="Busyness" oninput="amount.value=busyness.value" />
+              <output name="amount" for="busyness">0</output>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+          </form>
         </div>
-
-        <button type="submit" class="btn btn-primary">Update</button>
-      </form>
+      </div>
     </div>
   </div>
 
-  {% if now_busyness is defined %}
-    <div class="card">
+  {% if chart is not none %}
+    <div class="card m-b-lg">
       <div class="card-block">
         <div id="chart"></div>
         <br />
-        <p class="card-text text-center">Usually around this time, it is <strong>{{ (now_busyness * 10) | round }}% busy</strong>.</p>
+        <p class="card-text text-center">Usually around this time, it’s <strong>{{ place.scale.get_text(chart.now) }}</strong>.</p>
       </div>
     </div>
   {% endif %}
@@ -86,7 +92,7 @@
             {% for update in place.updates | islice(10) %}
               <tr>
                 <td>{{ loop.index }}</td>
-                <td>{{ update.busyness }}</td>
+                <td>{{ place.scale.get_text(update.busyness) }}</td>
                 <td>{{ update.date }}</td>
                 <td>{{ update.author.ip_address }}</td>
               </tr>
