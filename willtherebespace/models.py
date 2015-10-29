@@ -94,7 +94,7 @@ class PlaceScale(_Base):
         self.text_6 = 'just over half full'
         self.text_7 = 'reasonably full'
         self.text_8 = 'fairly full'
-        self.text_9 = 'very full'
+        self.text_9 = 'almost full'
         self.text_10 = 'full'
 
     def get_text(self, index):
