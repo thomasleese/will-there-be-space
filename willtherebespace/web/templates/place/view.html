@@ -116,7 +116,7 @@
             {% for update in place.updates | islice(10) %}
               <tr>
                 <td>{{ loop.index }}</td>
-                <td>{{ place.scale.get_text(update.busyness) }}</td>
+                <td>{{ place.scale.get_text(update.busyness) }} ({{ update.busyness }})</td>
                 <td>{{ update.date }}</td>
                 <td>{{ update.author.ip_address }}</td>
               </tr>
