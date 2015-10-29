@@ -38,6 +38,7 @@ class Author(_Base):
 
 
 def slugify(string):
+    string = string.replace('_', '-')
     return string.replace(' ', '-').lower()
 
 
