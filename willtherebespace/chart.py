@@ -42,17 +42,15 @@ class ContinousWeek(collections.UserDict):
 
 class BusynessChart:
     def __init__(self, raw_results):
-        if not raw_results:
-            raise ValueError('There are no results so a chart cannot be '
-                             'formed.')
-
         self.week = ContinousWeek()
 
         self.raw_week = ContinousWeek()
         for row in raw_results:
             self.raw_week.set(int(row[0]), int(row[1]), row[2])
 
-        average = sum(self.raw_week.data.values()) / len(self.raw_week.data)
+        if not self.raw_week.data:
+            raise ValueError('There are no results so a chart cannot be '
+                             'formed.')
 
         self.raw_week2 = ContinousWeek()
 

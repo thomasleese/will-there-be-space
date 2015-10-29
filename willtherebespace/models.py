@@ -73,7 +73,10 @@ class Place(_Base):
         session = _Session.object_session(self)
         raw_results = session.execute(sql, {'place_id': self.id})
 
-        return BusynessChart(raw_results)
+        try:
+            return BusynessChart(raw_results)
+        except ValueError:
+            return None
 
 
 class PlaceScale(_Base):

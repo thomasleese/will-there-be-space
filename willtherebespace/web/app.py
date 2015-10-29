@@ -63,9 +63,12 @@ def place(slug):
     else:
         chart = place.busyness_chart
 
-        return flask.render_template('place.html', place=place,
-                                     chart=chart.as_list(),
-                                     now_busyness=chart.now)
+        if chart is None:
+            return flask.render_template('place.html', place=place)
+        else:
+            return flask.render_template('place.html', place=place,
+                                         chart=chart.as_list(),
+                                         now_busyness=chart.now)
 
 
 def make_author():
