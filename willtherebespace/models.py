@@ -71,10 +71,7 @@ class Place(_Base):
         """
 
         session = _Session.object_session(self)
-
-        raw_results = {}
-        for row in session.execute(sql, {'place_id': self.id}):
-            raw_results[(int(row[0]) - 1, int(row[1]))] = row[2]
+        raw_results = session.execute(sql, {'place_id': self.id})
 
         return BusynessChart(raw_results)
 

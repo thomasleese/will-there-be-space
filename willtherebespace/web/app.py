@@ -64,8 +64,8 @@ def place(slug):
         chart = place.busyness_chart
 
         return flask.render_template('place.html', place=place,
-                                     chart=chart.results,
-                                     now_busyness=chart.now_results)
+                                     chart=chart.as_list(),
+                                     now_busyness=chart.now)
 
 
 def make_author():
