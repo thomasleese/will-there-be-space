@@ -86,7 +86,7 @@ class PlaceScale(_Base):
 
     def __init__(self):
         self.text_0 = 'empty'
-        self.text_1 = 'very empty'
+        self.text_1 = 'almost empty'
         self.text_2 = 'fairly empty'
         self.text_3 = 'reasonably empty'
         self.text_4 = 'almost half full'
