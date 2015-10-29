@@ -36,7 +36,11 @@ def remove_session(*args, **kwargs):
 
 @app.route('/')
 def home():
-    places = flask.g.sql_session.query(Place).all()
+    places = flask.g.sql_session.query(Place) \
+        .outerjoin(PlaceUpdate) \
+        .order_by(PlaceUpdate.date.desc()) \
+        .all()
+
     return flask.render_template('place/index.html', places=places)
 
 
