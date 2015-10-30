@@ -97,7 +97,9 @@
     <div class="card m-b-lg">
       <div class="card-block">
         <div id="chart"></div>
+
         <br />
+
         <p class="card-text text-center lead">Right now, {{ place.name }} is probably <strong style="color: {{ place.scale.get_colour(chart.now) }}">{{ place.scale.get_text(chart.now) }}</strong>.</p>
       </div>
     </div>
@@ -113,7 +115,6 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>#</th>
               <th>Busyness</th>
               <th>Date</th>
               <th>Author</th>
@@ -123,9 +124,8 @@
           <tbody>
             {% for update in place.updates | islice(10) %}
               <tr>
-                <td>{{ loop.index }}</td>
                 <td>{{ place.scale.get_text(update.busyness) }} ({{ update.busyness }})</td>
-                <td>{{ update.date }}</td>
+                <td>{{ update.date.strftime('%d %b %Y %H:%M') }}</td>
                 <td>{{ update.author.ip_address }}</td>
               </tr>
             {% endfor %}
