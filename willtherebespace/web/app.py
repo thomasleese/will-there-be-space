@@ -12,7 +12,7 @@ from ..models import Author, Place, PlaceScale, PlaceUpdate, \
 
 
 app = flask.Flask('willtherebespace.web')
-app.wsgi_app = ProxyFix(app.wsgi_app)
+app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=2)  # Heroku and CloudFlare
 
 app.jinja_env.filters['islice'] = itertools.islice
 
