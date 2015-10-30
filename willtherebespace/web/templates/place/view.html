@@ -55,6 +55,14 @@
 {% endblock %}
 
 {% block content %}
+  {% if errors %}
+    <div class="alert alert-danger" role="alert">
+      {% for field, problems in errors.items() %}
+        <strong>{{ field }}</strong>: {{ problems | join(', ') }}
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <div class="row m-b">
     <div class="col-sm-9">
       <h1>{{ place.name }}</h1>
