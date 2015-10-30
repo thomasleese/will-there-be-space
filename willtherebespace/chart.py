@@ -102,8 +102,11 @@ class BusynessChart:
 
     @property
     def rows(self):
+        now = datetime.datetime.now()
+
         days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
         for day, day_name in enumerate(days):
             for hour in range(24):
-                yield day_name, hour, self.week.get(day, hour)
+                is_now = day == now.weekday() and hour == now.hour
+                yield day_name, hour, self.week.get(day, hour), is_now
