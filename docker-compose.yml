@@ -1,0 +1,32 @@
+postgres:
+  image: postgres
+  env_file: secrets/postgres.env
+
+redis:
+  image: redis
+
+web:
+  build: .
+  env_file: secrets/web.env
+  links:
+    - postgres
+    - redis
+
+nginx:
+  build: tools/nginx
+  links:
+    - web
+  ports:
+    - '80:80'
+
+backup:
+  build: tools/backup
+  env_file: secrets/backup.env
+  links:
+    - postgres
+
+ircbot:
+  build: tools/ircbot
+  env_file: secrets/ircbot.env
+  links:
+    - redis

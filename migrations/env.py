@@ -40,7 +40,7 @@ def run_migrations_online():
     """
 
     sqlalchemy_config = config.get_section(config.config_ini_section)
-    sqlalchemy_config['sqlalchemy.url'] = os.environ['DATABASE_URL']
+    sqlalchemy_config['sqlalchemy.url'] = os.environ['DATABASE_URI']
 
     connectable = engine_from_config(sqlalchemy_config,
                                      prefix='sqlalchemy.',

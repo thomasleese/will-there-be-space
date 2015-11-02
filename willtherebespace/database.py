@@ -16,7 +16,7 @@ _sql_connection = None
 
 
 def get_sql_database_uri():
-    key = 'DATABASE_URL'
+    key = 'DATABASE_URI'
     try:
         return os.environ[key]
     except KeyError:
