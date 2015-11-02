@@ -20,6 +20,8 @@ setup(
         'cerberus',
         'Flask',
         'gunicorn',
+	'raven',
+	'redis',
         'requests',
         'passlib',
         'psycopg2',
