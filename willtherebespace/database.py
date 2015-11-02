@@ -3,6 +3,7 @@
 import logging
 import os
 
+import redis
 import sqlalchemy
 
 from . import models
@@ -13,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 _sql_engine = None
 _sql_connection = None
+_redis = None
 
 
 def get_sql_database_uri():
@@ -58,3 +60,36 @@ def get_sql_connection():
     if _sql_connection is None or _sql_connection.closed:
         connect_to_sql()
     return _sql_connection
+
+
+def get_redis_uri():
+    key = 'REDIS_URI'
+    try:
+        return os.environ[key]
+    except KeyError:
+        msg = 'Redis URI is not configured. ' \
+              'Please set {key} environment variable.'.format(key=key)
+        raise RuntimeError(msg)
+
+
+def connect_to_redis():
+    global _redis
+
+    if _redis is not None:
+        raise RuntimeError('Attempted to connect, but already connected.')
+
+    uri = get_redis_uri()
+
+    logger.info('Connecting to Redis.')
+
+    connection = redis.Redis.from_url(uri)
+
+    _redis = connection
+
+    return connection
+
+
+def get_redis():
+    if _redis is None:
+        connect_to_redis()
+    return _redis

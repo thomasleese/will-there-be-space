@@ -31,6 +31,7 @@ app.jinja_env.filters['islice'] = itertools.islice
 def configure_database():
     app.sql_engine = database.get_sql_engine()
     app.sql_connection = database.get_sql_connection()
+    app.redis = database.get_redis()
     app.logger.info('Connected to database.')
 
 
@@ -85,6 +86,11 @@ def place(slug):
         if check_recaptcha() and v.validate(form):
             author = make_author()
             update = PlaceUpdate(v.document['busyness'], author, place=place)
+
+            app.redis.publish('updates', '{} has set {} to {}.'.format(
+                author.ip_address, place.name,
+                place.scale.get_text(v.document['busyness'])
+            ))
 
             flask.g.sql_session.add(update)
             flask.g.sql_session.commit()
