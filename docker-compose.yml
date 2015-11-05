@@ -1,13 +1,13 @@
 postgres:
   image: postgres
-  env_file: secrets/postgres.env
 
 redis:
   image: redis
 
 web:
   build: .
-  env_file: secrets/web.env
+  environment:
+    REDIS_URI: redis://redis
   links:
     - postgres
     - redis
@@ -19,14 +19,9 @@ nginx:
   ports:
     - '80:80'
 
-backup:
-  build: tools/backup
-  env_file: secrets/backup.env
-  links:
-    - postgres
-
 ircbot:
   build: tools/ircbot
-  env_file: secrets/ircbot.env
+  environment:
+    REDIS_URI: redis://redis
   links:
     - redis

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+cd "$(dirname "$0")/.."
+
+docker-machine start will-there-be-space-dev
+if [ $? -ne 0 ]; then
+    docker-machine create --driver virtualbox will-there-be-space-dev
+fi
+
+set -e
+
+eval "$(docker-machine env will-there-be-space-dev)"
+
+docker-compose build

@@ -1,0 +1,14 @@
+postgres:
+  env_file: secrets/postgres.env
+
+web:
+  env_file: secrets/web.env
+
+backup:
+  build: tools/backup
+  env_file: secrets/backup.env
+  links:
+    - postgres
+
+ircbot:
+  env_file: secrets/ircbot.env
