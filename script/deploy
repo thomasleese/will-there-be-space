@@ -6,4 +6,5 @@ cd "$(dirname "$0")/.."
 
 eval "$(docker-machine env will-there-be-space)"
 
+docker-compose -f docker-compose.yml -f docker-compose.production.yml build
 docker-compose -f docker-compose.yml -f docker-compose.production.yml up -d
