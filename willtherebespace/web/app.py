@@ -55,6 +55,11 @@ def home():
     return flask.render_template('place/index.html', places=places)
 
 
+@app.route('/about')
+def about():
+    return flask.render_template('about.html')
+
+
 def check_recaptcha():
     payload = {
         'secret': os.environ['RECAPTCHA_SECRET'],
