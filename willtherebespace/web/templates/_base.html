@@ -28,21 +28,12 @@
       {% endblock %}
     </div>
 
-    <footer class="footer m-t-md">
+    <footer class="footer m-t">
       <div class="container m-b-md">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- Will there be space? -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-3110873768240114"
-             data-ad-slot="8699971989"
-             data-ad-format="auto"></ins>
-        <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+        {% include "_includes/ad.html" %}
       </div>
 
-      <div class="container">
+      <div class="container m-t-md">
         <p class="text-center text-muted">
           A website by <a href="https://www.thomasleese.me">Thomas Leese</a>.
         </p>
@@ -57,20 +48,7 @@
     {% block scripts %}
     {% endblock %}
 
-    <script type="text/javascript">
-      var _gauges = _gauges || [];
-      (function() {
-        var t   = document.createElement('script');
-        t.type  = 'text/javascript';
-        t.async = true;
-        t.id    = 'gauges-tracker';
-        t.setAttribute('data-site-id', '5630de0f5dd053276a006d8a');
-        t.setAttribute('data-track-path', 'https://track.gaug.es/track.gif');
-        t.src = 'https://track.gaug.es/track.js';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(t, s);
-      })();
-    </script>
+    {% include "_includes/analytics.html" %}
   </body>
 
 </html>
