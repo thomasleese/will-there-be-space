@@ -1,0 +1,16 @@
+{
+  "name": "will-there-be-space",
+  "version": "0.1.0",
+  "dependencies": {
+    "irc": "^0.4.0",
+    "redis": "^2.3.0"
+  },
+  "engines": {
+    "node": "4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thomasleese/will-there-be-space"
+  },
+  "license": "MIT"
+}
