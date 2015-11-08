@@ -28,7 +28,7 @@
       {% endblock %}
     </div>
 
-    <footer class="m-t-md">
+    <footer class="footer m-t-md">
       <div class="container m-b-md">
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <!-- Will there be space? -->
@@ -42,7 +42,15 @@
         </script>
       </div>
 
-      <p class="text-center text-muted">A website by <a href="https://www.thomasleese.me">Thomas Leese</a>.</p>
+      <div class="container">
+        <p class="text-center text-muted">
+          A website by <a href="https://www.thomasleese.me">Thomas Leese</a>.
+        </p>
+
+        <p class="text-center text-muted">
+          <small><a href="mailto:feedback@will-there-be.space">Submit Feedback</a> &middot; <a href="http://thomasleese.tumblr.com">Blog</a></small>
+        </p>
+      </div>
     </footer>
 
     <script src="{{ url_for('static', filename='scripts/bootstrap.min.js') }}"></script>
