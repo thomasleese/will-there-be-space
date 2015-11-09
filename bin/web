@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$ENV" == "development" ]; then
+if [ "$ENV" = "development" ]; then
     python -m willtherebespace.web
 else
     gunicorn willtherebespace.web:app
