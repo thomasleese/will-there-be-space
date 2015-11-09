@@ -1,8 +1,0 @@
-postgres:
-  environment:
-    POSTGRES_PASSWORD: password
-
-web:
-  command: python -m willtherebespace.web
-  environment:
-    DATABASE_URI: postgres://postgres:password@postgres/postgres
