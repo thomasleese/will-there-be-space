@@ -7,7 +7,9 @@ var ircClient = new irc.Client(process.env.IRC_SERVER, 'SpaceBot', {
 });
 
 redisClient.on('message', function(channel, message) {
-  ircClient.say(process.env.IRC_CHANNEL, message);
+  if (process.env.IRC_CHANNEL) {
+    ircClient.say(process.env.IRC_CHANNEL, message);
+  }
 });
 
 redisClient.subscribe('updates');
