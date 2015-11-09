@@ -1,7 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 # script/setup: Set up application for the first time after cloning, or set it
 #               back to the initial first unused state.
+
+function progress {
+    echo "$(tput bold)$(tput setaf 4)==>$(tput sgr0) $(tput bold)$1$(tput sgr0)"
+}
 
 set -e
 
@@ -9,9 +13,7 @@ cd "$(dirname "$0")/.."
 
 script/bootstrap
 
-echo "===> Setting up DB..."
-
-brew services restart postgres
+progress "Setting up DB…"
 
 dropdb --if-exists willtherebespace
 createdb willtherebespace
@@ -25,4 +27,4 @@ alembic upgrade head
 
 deactivate
 
-echo "==> App is now ready to go!"
+progress "App is now ready to go!"

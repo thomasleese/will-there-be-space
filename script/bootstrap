@@ -1,7 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 # script/bootstrap: Resolve all dependencies that the application requires to
 #                   run.
+
+function progress {
+    echo "$(tput bold)$(tput setaf 4)==>$(tput sgr0) $(tput bold)$1$(tput sgr0)"
+}
 
 set -e
 
@@ -9,12 +13,12 @@ cd "$(dirname "$0")/.."
 
 # Brew
 brew bundle check 2>&1 >/dev/null || {
-    echo "==> Installing Homebrew dependencies…"
+    progress "Installing Homebrew dependencies…"
     brew bundle
 }
 
 # Python
-echo "==> Installing Python dependencies…"
+progress "Installing Python dependencies…"
 
 if [ ! -d "venv" ]; then
     pyvenv venv
@@ -26,6 +30,12 @@ pip install --quiet -e .
 deactivate
 
 # Node
-echo "==> Installing Node.js dependencies…"
+progress "Installing Node.js dependencies…"
 
 npm install
+
+# Services
+progress "Starting services…"
+
+brew services restart postgres
+brew services restart redis

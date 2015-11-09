@@ -1,4 +1,8 @@
-#!/bin/sh
+#!/bin/bash
+
+function progress {
+    echo "$(tput bold)$(tput setaf 4)==>$(tput sgr0) $(tput bold)$1$(tput sgr0)"
+}
 
 set -e
 
@@ -6,9 +10,7 @@ cd "$(dirname "$0")/.."
 
 script/bootstrap
 
-echo "===> Updating DB..."
-
-brew services restart postgres
+progress "Updating DB…"
 
 export DATABASE_URL=postgres://localhost/willtherebespace
 

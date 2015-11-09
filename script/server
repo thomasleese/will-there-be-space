@@ -1,13 +1,14 @@
-#!/bin/sh
+#!/bin/bash
+
+function progress {
+    echo "$(tput bold)$(tput setaf 4)==>$(tput sgr0) $(tput bold)$1$(tput sgr0)"
+}
 
 set -e
 
 cd "$(dirname "$0")/.."
 
 script/update
-
-brew services restart postgres
-brew services restart redis
 
 source venv/bin/activate
 
@@ -16,4 +17,6 @@ export ENV=development
 export DATABASE_URL=postgres://localhost/willtherebespace
 export REDIS_URL=redis://localhost/willtherebespace
 
-heroku local
+progress "Starting app…"
+
+foreman start
