@@ -157,7 +157,7 @@
           <form method="POST" id="updateForm">
             <input id="busyness" type="hidden" name="busyness" value="0" />
 
-            <div class="g-recaptcha m-b-lg" data-sitekey="6LeD0A8TAAAAAHilJ-3uBY_2y58Gxu561r1VEofU"></div>
+            <div class="g-recaptcha m-b-lg" data-sitekey="{{ config['RECAPTCHA_SITE_KEY'] }}"></div>
 
             <div class="text-center m-t-lg">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

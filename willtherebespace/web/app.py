@@ -18,6 +18,9 @@ app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=2)  # Nginx and CloudFlare
 
 app.jinja_env.filters['islice'] = itertools.islice
 
+app.config['RECAPTCHA_SITE_KEY'] = os.environ['RECAPTCHA_SITE_KEY']
+app.config['RECAPTCHA_SECRET_KEY'] = os.environ['RECAPTCHA_SECRET_KEY']
+
 
 @app.before_first_request
 def initialise_rollbar():
@@ -69,7 +72,7 @@ def about():
 
 def check_recaptcha():
     payload = {
-        'secret': os.environ['RECAPTCHA_SECRET'],
+        'secret': app.config['RECAPTCHA_SECRET_KEY'],
         'response': flask.request.form['g-recaptcha-response'],
     }
     app.logger.debug('Testing Recaptcha response.')
