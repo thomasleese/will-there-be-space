@@ -1,14 +1,27 @@
 #!/bin/sh
 
-cd "$(dirname "$0")/.."
-
-docker-machine start will-there-be-space-dev
-if [ $? -ne 0 ]; then
-    docker-machine create --driver virtualbox will-there-be-space-dev
-fi
+# script/bootstrap: Resolve all dependencies that the application requires to
+#                   run.
 
 set -e
 
-eval "$(docker-machine env will-there-be-space-dev)"
+cd "$(dirname "$0")/.."
 
-docker-compose build
+# Brew
+brew bundle check 2>&1 >/dev/null || {
+    echo "==> Installing Homebrew dependencies…"
+    brew bundle
+}
+
+# Python
+if [ ! -d "venv" ]; then
+    pyvenv venv
+fi
+
+source venv/bin/activate
+pip install --quiet -r requirements.txt
+pip install --quiet -e .
+deactivate
+
+# Node
+npm install

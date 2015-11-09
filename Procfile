@@ -1,2 +1,2 @@
-web: gunicorn willtherebespace.web:app
+web: bin/web
 ircbot: node ircbot/bot.js

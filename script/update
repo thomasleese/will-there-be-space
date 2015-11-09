@@ -6,8 +6,14 @@ cd "$(dirname "$0")/.."
 
 script/bootstrap
 
-eval "$(docker-machine env will-there-be-space-dev)"
+echo "===> Updating DB..."
 
-docker-compose up -d
+brew services restart postgres
 
-docker-compose run web alembic upgrade head
+export DATABASE_URL=postgres://localhost/willtherebespace
+
+source venv/bin/activate
+
+alembic upgrade head
+
+deactivate

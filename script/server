@@ -6,6 +6,14 @@ cd "$(dirname "$0")/.."
 
 script/update
 
-eval "$(docker-machine env will-there-be-space-dev)"
+brew services restart postgres
+brew services restart redis
 
-docker-compose up
+source venv/bin/activate
+
+export ENV=development
+
+export DATABASE_URL=postgres://localhost/willtherebespace
+export REDIS_URL=redis://localhost/willtherebespace
+
+foreman start
