@@ -9,6 +9,10 @@ import sqlalchemy
 from . import models
 
 
+DATABASE_URI_KEY = 'DATABASE_URL'
+REDIS_URI_KEY = 'REDIS_URL'
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,8 +21,7 @@ _sql_connection = None
 _redis = None
 
 
-def get_sql_database_uri():
-    key = 'DATABASE_URI'
+def get_sql_database_uri(key=DATABASE_URI_KEY):
     try:
         return os.environ[key]
     except KeyError:
@@ -62,8 +65,7 @@ def get_sql_connection():
     return _sql_connection
 
 
-def get_redis_uri():
-    key = 'REDIS_URI'
+def get_redis_uri(key=REDIS_URI_KEY):
     try:
         return os.environ[key]
     except KeyError:
