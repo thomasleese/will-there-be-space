@@ -1,7 +1,7 @@
 var irc = require('irc');
 var redis = require('redis');
 
-var redisClient = redis.createClient(process.env.REDIS_URI);
+var redisClient = redis.createClient(process.env.REDIS_URL);
 var ircClient = new irc.Client(process.env.IRC_SERVER, 'SpaceBot', {
   channels: [process.env.IRC_CHANNEL],
 });
