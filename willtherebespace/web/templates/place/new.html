@@ -28,7 +28,9 @@
       {% endif %}
     </div>
 
-    <div class="g-recaptcha m-b" data-sitekey="{{ config['RECAPTCHA_SITE_KEY'] }}"></div>
+    {% if config['RECAPTCHA_ENABLED'] %}
+      <div class="g-recaptcha m-b" data-sitekey="{{ config['RECAPTCHA_SITE_KEY'] }}"></div>
+    {% endif %}
 
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>

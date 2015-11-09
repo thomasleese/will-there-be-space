@@ -18,8 +18,18 @@ app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=2)  # Nginx and CloudFlare
 
 app.jinja_env.filters['islice'] = itertools.islice
 
-app.config['RECAPTCHA_SITE_KEY'] = os.environ['RECAPTCHA_SITE_KEY']
-app.config['RECAPTCHA_SECRET_KEY'] = os.environ['RECAPTCHA_SECRET_KEY']
+
+@app.before_first_request
+def configure_recaptcha():
+    try:
+        app.config['RECAPTCHA_SITE_KEY'] = os.environ['RECAPTCHA_SITE_KEY']
+        app.config['RECAPTCHA_SECRET_KEY'] = os.environ['RECAPTCHA_SECRET_KEY']
+        app.config['RECAPTCHA_ENABLED'] = True
+    except KeyError:
+        if not app.debug:
+            raise
+        else:
+            app.config['RECAPTCHA_ENABLED'] = False
 
 
 @app.before_first_request
@@ -71,6 +81,9 @@ def about():
 
 
 def check_recaptcha():
+    if not app.config['RECAPTCHA_ENABLED']:
+        return True
+
     payload = {
         'secret': app.config['RECAPTCHA_SECRET_KEY'],
         'response': flask.request.form['g-recaptcha-response'],
@@ -96,7 +109,11 @@ def place(slug):
         })
 
         form = dict(flask.request.form.items())
-        del form['g-recaptcha-response']
+
+        try:
+            del form['g-recaptcha-response']
+        except KeyError:
+            pass
 
         if check_recaptcha() and v.validate(form):
             author = make_author()
@@ -131,7 +148,11 @@ def new_place():
         })
 
         form = dict(flask.request.form.items())
-        del form['g-recaptcha-response']
+
+        try:
+            del form['g-recaptcha-response']
+        except KeyError:
+            pass
 
         if check_recaptcha() and v.validate(form):
             author = make_author()
