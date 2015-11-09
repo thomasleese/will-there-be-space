@@ -1,11 +1,11 @@
 import itertools
-import logging
 import os
 
 from cerberus import Validator
 import flask
 import requests
-from raven.contrib.flask import Sentry
+import rollbar
+import rollbar.contrib.flask
 from werkzeug.contrib.fixers import ProxyFix
 
 from .. import database
@@ -16,15 +16,22 @@ from ..models import Author, Place, PlaceScale, PlaceUpdate, \
 app = flask.Flask('willtherebespace.web')
 app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=2)  # Nginx and CloudFlare
 
-try:
-    sentry_dsn = os.environ['SENTRY_DSN']
-except KeyError:
-    pass
-else:
-    app.sentry = Sentry(app, dsn=sentry_dsn, logging=True,
-                        level=logging.WARNING)
-
 app.jinja_env.filters['islice'] = itertools.islice
+
+
+@app.before_first_request
+def initialise_rollbar():
+    try:
+        access_token = os.environ['ROLLBAR_ACCESS_TOKEN']
+    except KeyError:
+        return
+
+    rollbar.init(access_token, 'will-there-be-space',
+                 root=os.path.dirname(os.path.realpath(__file__)),
+                 allow_logging_basic_config=False)
+
+    flask.got_request_exception.connect(rollbar.contrib.flask.report_exception,
+                                        app)
 
 
 @app.before_first_request

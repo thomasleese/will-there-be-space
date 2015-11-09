@@ -20,7 +20,7 @@ setup(
         'cerberus',
         'Flask',
         'gunicorn',
-        'raven',
+        'rollbar',
         'redis',
         'requests',
         'passlib',
