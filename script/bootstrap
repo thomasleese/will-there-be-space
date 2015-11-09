@@ -14,6 +14,8 @@ brew bundle check 2>&1 >/dev/null || {
 }
 
 # Python
+echo "==> Installing Python dependencies…"
+
 if [ ! -d "venv" ]; then
     pyvenv venv
 fi
@@ -24,4 +26,6 @@ pip install --quiet -e .
 deactivate
 
 # Node
+echo "==> Installing Node.js dependencies…"
+
 npm install
