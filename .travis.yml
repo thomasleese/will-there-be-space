@@ -5,6 +5,8 @@ addons:
       - deadsnakes
     packages:
       - python3.4
+      - python3.4-dev
+      - python3.4-venv
 
 services:
   - redis-server
