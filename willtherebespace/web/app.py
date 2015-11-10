@@ -16,7 +16,7 @@ from ..models import Author, Place, PlaceScale, PlaceUpdate, \
 
 
 app = flask.Flask('willtherebespace.web')
-app.wsgi_app = ProxyFix(app.wsgi_app)  # Nginx and CloudFlare
+app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=3)  # Nginx and CloudFlare
 
 app.jinja_env.filters['islice'] = itertools.islice
 
