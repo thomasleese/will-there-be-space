@@ -108,9 +108,12 @@ def check_recaptcha():
 
 @app.route('/in/<slug>', methods=['GET', 'POST'])
 def place(slug):
-    place = flask.g.sql_session.query(Place) \
-        .filter(Place.slug == slug) \
-        .one()
+    try:
+        place = flask.g.sql_session.query(Place) \
+            .filter(Place.slug == slug) \
+            .one()
+    except sqlalchemy.orm.exc.NoResultFound:
+        flask.abort(404)
 
     if flask.request.method == 'POST':
         v = Validator({
@@ -175,3 +178,13 @@ def new_place():
         else:
             return flask.render_template('place/new.html', errors=v.errors)
     return flask.render_template('place/new.html')
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return flask.render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return flask.render_template('500.html'), 500
