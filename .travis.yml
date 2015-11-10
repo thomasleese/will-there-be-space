@@ -4,9 +4,9 @@ addons:
     sources:
       - deadsnakes
     packages:
-      - python3.4
-      - python3.4-dev
-      - python3.4-venv
+      - python3.5
+      - python3.5-dev
+      - python3.5-venv
 
 services:
   - redis-server
