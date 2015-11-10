@@ -11,10 +11,10 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-if [ -v "$CI" ]; then
-    script/setup
-else
+if [ -z "$CI" ]; then
     script/update
+else
+    script/setup
 fi
 
 progress "Running tests…"
