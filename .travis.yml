@@ -6,4 +6,5 @@ services:
   - postgresql
 
 script:
-  - bash -n script/cibuild
+  - bash -n script/*
+  - bash script/cibuild
