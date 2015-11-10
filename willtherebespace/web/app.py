@@ -20,8 +20,6 @@ app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=2)  # Nginx and CloudFlare
 
 app.jinja_env.filters['islice'] = itertools.islice
 
-app.config['PREFERRED_URL_SCHEME'] = 'https'
-
 
 @app.before_first_request
 def configure_recaptcha():
@@ -191,10 +189,6 @@ def robots():
 
 @app.route('/sitemap.xml')
 def sitemap():
-    app.logger.info(flask.request.environ.get('HTTP_X_FORWARDED_PROTO', ''))
-    print(flask.request.environ.get('HTTP_X_FORWARDED_PROTO', ''))
-    app.logger.error(flask.request.environ.get('HTTP_X_FORWARDED_PROTO', ''))
-
     pages = []
 
     ten_days_ago = (datetime.datetime.now() -
