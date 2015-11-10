@@ -14,7 +14,7 @@ script/bootstrap
 
 progress "Updating DB…"
 
-export DATABASE_URL=postgres://localhost/willtherebespace
+export DATABASE_URL=postgresql://localhost/willtherebespace
 
 source venv/bin/activate
 
