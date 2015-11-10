@@ -55,6 +55,13 @@ class Place(_Base):
         self.author = author
 
     @property
+    def last_update(self):
+        try:
+            return self.updates[0]
+        except IndexError:
+            return None
+
+    @property
     def busyness_chart(self):
         sql = """
             SELECT

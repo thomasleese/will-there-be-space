@@ -1,3 +1,4 @@
+import datetime
 import itertools
 import os
 
@@ -178,6 +179,42 @@ def new_place():
         else:
             return flask.render_template('place/new.html', errors=v.errors)
     return flask.render_template('place/new.html')
+
+
+@app.route('/robots.txt')
+def robots():
+    text = flask.render_template('robots.txt')
+    return flask.Response(text, mimetype='text/plain')
+
+
+@app.route('/sitemap.xml')
+def sitemap():
+    pages = []
+
+    ten_days_ago = (datetime.datetime.now() -
+                    datetime.timedelta(days=10)).date().isoformat()
+
+    # static pages
+    for rule in app.url_map.iter_rules():
+        if 'GET' in rule.methods and not rule.arguments:
+            pages.append([rule.rule, ten_days_ago, 'weekly', 1])
+
+    # place pages
+    places = flask.g.sql_session.query(Place) \
+        .outerjoin(PlaceUpdate) \
+        .order_by(PlaceUpdate.date.desc()) \
+        .all()
+
+    for place in places:
+        url = flask.url_for('.place', slug=place.slug)
+        if place.last_update:
+            modified_time = place.last_update.date.date().isoformat()
+        else:
+            modified_time = ten_days_ago
+        pages.append([url, modified_time, 'daily', 0.8])
+
+    sitemap = flask.render_template('sitemap.xml', pages=pages)
+    return flask.Response(sitemap, mimetype='application/xml')
 
 
 @app.errorhandler(404)
