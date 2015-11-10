@@ -12,10 +12,12 @@ set -e
 cd "$(dirname "$0")/.."
 
 # Brew
-brew bundle check 2>&1 >/dev/null || {
-    progress "Installing Homebrew dependencies…"
-    brew bundle
-}
+if [ -z "$CI" ]; then
+    brew bundle check 2>&1 >/dev/null || {
+        progress "Installing Homebrew dependencies…"
+        brew bundle
+    }
+fi
 
 # Python
 progress "Installing Python dependencies…"
@@ -35,7 +37,9 @@ progress "Installing Node.js dependencies…"
 npm install
 
 # Services
-progress "Starting services…"
+if [ -z "$CI" ]; then
+    progress "Starting services…"
 
-brew services restart postgres
-brew services restart redis
+    brew services restart postgres
+    brew services restart redis
+fi
