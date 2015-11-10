@@ -23,7 +23,17 @@ fi
 progress "Installing Python dependencies…"
 
 if [ ! -d "venv" ]; then
-    pyvenv venv
+    for pyvenv in pyvenv pyvenv-3.5; do
+        if hash $pyvenv 2>/dev/null; then
+            $pyvenv venv
+            break
+        fi
+    done
+fi
+
+if [ ! -d "venv" ]; then
+    echo "Virtual environment not created."
+    exit 1
 fi
 
 source venv/bin/activate
