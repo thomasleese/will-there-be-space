@@ -20,6 +20,8 @@ app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=2)  # Nginx and CloudFlare
 
 app.jinja_env.filters['islice'] = itertools.islice
 
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+
 
 @app.before_first_request
 def configure_recaptcha():
