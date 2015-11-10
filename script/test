@@ -17,15 +17,18 @@ else
     script/setup
 fi
 
-progress "Running tests…"
-
 source venv/bin/activate
+
+export DATABASE_URL=postgresql://localhost/willtherebespace
+export REDIS_URL=redis://localhost/willtherebespace
+
+progress "Running tests…"
 
 if [ -n "$1" ]; then
   # pass arguments to test call. This is useful for calling a single test.
-  ./setup.py nosetests $*
+  ./setup.py test $*
 else
-  ./setup.py nosetests
+  ./setup.py test
 fi
 
 deactivate

@@ -12,7 +12,6 @@ setup(
     packages=find_packages(exclude=['tests*']),
     zip_safe=True,
     setup_requires=[
-        'nose >=1.3, <2',
         'Sphinx >=1.3, <2'
     ],
     install_requires=[
@@ -27,5 +26,5 @@ setup(
         'psycopg2',
         'SQLAlchemy',
     ],
-    test_suite='nose.collector',
+    test_suite='tests',
 )

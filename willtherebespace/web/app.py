@@ -28,10 +28,10 @@ def configure_recaptcha():
         app.config['RECAPTCHA_SECRET_KEY'] = os.environ['RECAPTCHA_SECRET_KEY']
         app.config['RECAPTCHA_ENABLED'] = True
     except KeyError:
-        if not app.debug:
-            raise
-        else:
+        if app.debug or app.testing:
             app.config['RECAPTCHA_ENABLED'] = False
+        else:
+            raise
 
 
 @app.before_first_request
