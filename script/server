@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# script/server: Launch the application and any extra required processes
+#                locally.
+
 function progress {
     echo "$(tput bold)$(tput setaf 4)==>$(tput sgr0) $(tput bold)$1$(tput sgr0)"
 }

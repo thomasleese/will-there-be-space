@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# script/update: Update application to run for its current checkout.
+
 function progress {
     echo "$(tput bold)$(tput setaf 4)==>$(tput sgr0) $(tput bold)$1$(tput sgr0)"
 }
