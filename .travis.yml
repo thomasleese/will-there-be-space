@@ -2,7 +2,7 @@ addons:
   postgresql: '9.3'
   apt:
     sources:
-      - ppa:fkrull/deadsnakes
+      - deadsnakes
     packages:
       - python3.4
 
