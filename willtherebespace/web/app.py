@@ -6,6 +6,7 @@ import flask
 import requests
 import rollbar
 import rollbar.contrib.flask
+import sqlalchemy
 from werkzeug.contrib.fixers import ProxyFix
 
 from .. import database
@@ -67,10 +68,19 @@ def remove_session(*args, **kwargs):
 
 @app.route('/')
 def home():
-    places = flask.g.sql_session.query(Place) \
+    query = flask.g.sql_session.query(Place) \
         .outerjoin(PlaceUpdate) \
-        .order_by(PlaceUpdate.date.desc()) \
-        .all()
+        .order_by(PlaceUpdate.date.desc())
+
+    if 'q' in flask.request.args:
+        q = flask.request.args['q']
+        query = query.filter(sqlalchemy.or_(
+            Place.name.ilike('%' + q + '%'),
+            Place.description.ilike('%' + q + '%'),
+            Place.location.ilike('%' + q + '%')
+        ))
+
+    places = query.all()
 
     return flask.render_template('place/index.html', places=places)
 

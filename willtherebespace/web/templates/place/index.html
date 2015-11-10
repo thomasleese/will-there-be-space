@@ -11,6 +11,17 @@
 {% endblock %}
 
 {% block content %}
+  <hr class="m-b" />
+  <div class="text-center">
+    <p class="lead m-r m-t" style="display: inline-block; vertical-align: middle;">Search for places:</p>
+
+    <form class="form-inline" style="display: inline-block; vertical-align: middle;">
+      <input class="form-control" type="text" name="q" value="{{ request.args['q'] }}" />
+      <button class="btn btn-primary" type="submit"><span class="ion-search m-r"></span>Search</button>
+    </form>
+  </div>
+  <hr class="m-t m-b-md" />
+
   {% for place_batch in places | batch(2) %}
     <div class="row">
       {% for place in place_batch %}
@@ -26,7 +37,7 @@
     </div>
   {% endfor %}
 
-  <hr class="m-t-lg m-b-md" />
+  <hr class="m-b-md" />
   <p class="lead text-center">Can’t find your favourite place…?</p>
   <p class="text-center"><a class="btn btn-success" href="{{ url_for('.new_place') }}">Add a new place</a></p>
   <hr class="m-b m-t-md" />
