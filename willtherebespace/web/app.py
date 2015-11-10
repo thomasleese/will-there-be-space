@@ -197,7 +197,8 @@ def sitemap():
     # static pages
     for rule in app.url_map.iter_rules():
         if 'GET' in rule.methods and not rule.arguments:
-            pages.append([rule.rule, ten_days_ago, 'weekly', 1])
+            pages.append([flask.url_for(rule.endpoint, _external=True),
+                          ten_days_ago, 'weekly', 1])
 
     # place pages
     places = flask.g.sql_session.query(Place) \
@@ -206,7 +207,7 @@ def sitemap():
         .all()
 
     for place in places:
-        url = flask.url_for('.place', slug=place.slug)
+        url = flask.url_for('.place', slug=place.slug, _external=True)
         if place.last_update:
             modified_time = place.last_update.date.date().isoformat()
         else:
