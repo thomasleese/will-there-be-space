@@ -50,6 +50,6 @@ npm install
 if [ -z "$CI" ]; then
     progress "Starting services…"
 
-    brew services restart postgres
-    brew services restart redis
+    brew services start postgres
+    brew services start redis
 fi
