@@ -107,6 +107,22 @@ def check_recaptcha():
     return json['success']
 
 
+def notify_slack(update):
+    message = '*{}* has set *{}* to *{}*.'.format(
+        update.author.ip_address, update.place.name,
+        update.place.scale.get_text(update.busyness)
+    )
+
+    try:
+        url = os.environ['SLACK_WEBHOOK_URL']
+    except KeyError:
+        return
+
+    payload = {'text': message, 'username': 'update'}
+
+    requests.post(url, json=payload)
+
+
 @app.route('/in/<slug>', methods=['GET', 'POST'])
 def place(slug):
     try:
@@ -137,6 +153,8 @@ def place(slug):
                 author.ip_address, place.name,
                 place.scale.get_text(v.document['busyness'])
             ))
+
+            notify_slack(update)
 
             flask.g.sql_session.add(update)
             flask.g.sql_session.commit()
