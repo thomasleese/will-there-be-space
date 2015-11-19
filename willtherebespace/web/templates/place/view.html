@@ -48,6 +48,21 @@
       }
     </script>
   {% endif %}
+
+  <script>
+    var PlaceScale = {
+      text: {
+        {% for i in range(11) %}
+          {{ i }}: {{ place.scale.get_text(i) | tojson }},
+        {% endfor %}
+      },
+      colour: {
+        {% for i in range(11) %}
+          {{ i }}: {{ place.scale.get_colour(i) | tojson }},
+        {% endfor %}
+      }
+    };
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -60,29 +75,31 @@
   {% endif %}
 
   <div class="row m-b">
-    <div class="col-md-9">
+    <div class="col-md-8">
       <h1>{{ place.name }}</h1>
       <p class="lead">{{ place.description }}</p>
       <p class="text-muted">{{ place.location }}</p>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-4">
       <div class="card">
         <div class="card-block">
           <h5 class="card-title">How busy is it now?</h5>
 
           <form method="POST">
-            <div class="form-group row">
-              <div class="col-sm-10">
-                <input class="form-control" type="range" value="0" name="busyness" min="0" max="10" placeholder="Busyness" oninput="amount.value=document.getElementById('busyness').value=busyness.value" />
-              </div>
-
-              <div class="col-sm-2">
-                <strong><output name="amount" for="busyness">0</output></strong>
-              </div>
+            <div class="form-group">
+              <input class="form-control" type="range" value="0" name="busyness" min="0" max="10" placeholder="Busyness" oninput="document.getElementById('busyness').value=busyness.value; amount.value=PlaceScale.text[busyness.value]; amount.style.color=PlaceScale.colour[busyness.value]" />
             </div>
 
-            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateFormModal">Post update</button>
+            <div class="row">
+              <div class="col-sm-7">
+                <strong><output name="amount" for="busyness" style="color: {{ place.scale.get_colour(0) }}">{{ place.scale.get_text(0) }}</output></strong>
+              </div>
+
+              <div class="col-sm-5 text-right">
+                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateFormModal">Post Update</button>
+              </div>
+            </div>
           </form>
         </div>
       </div>
