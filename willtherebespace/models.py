@@ -8,7 +8,7 @@ from sqlalchemy.orm import backref, scoped_session, sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base, DeferredReflection
 from passlib.context import CryptContext
 
-from .chart import BusynessChart
+from .chart import BusynessChart, InvalidBusynessChart
 
 
 _Base = declarative_base(cls=DeferredReflection)
@@ -67,6 +67,7 @@ class Place(_Base):
             SELECT
                 to_char(date, 'ID') AS day,
                 to_char(date, 'HH24') as hour,
+                round(extract('minute' from date) / 15) as quarter,
                 AVG(busyness) AS busyness
             FROM
                 place_update
@@ -74,7 +75,8 @@ class Place(_Base):
                 place_update.place_id = :place_id
             GROUP BY
                 to_char(date, 'ID'),
-                to_char(date, 'HH24')
+                to_char(date, 'HH24'),
+                round(extract('minute' from date) / 15)
         """
 
         session = _Session.object_session(self)
@@ -82,7 +84,7 @@ class Place(_Base):
 
         try:
             return BusynessChart(raw_results)
-        except ValueError:
+        except InvalidBusynessChart:
             return None
 
 

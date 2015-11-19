@@ -21,7 +21,7 @@
         var data = google.visualization.arrayToDataTable([
           ['Time', 'Busyness', {role: 'style'}, {role: 'annotation'}],
           {% for row in chart.rows %}
-            ['{{ row[0] }} {{ row[1] }}h', {{ row[2] }}, '{{ place.scale.get_colour(row[2]) }}', '{{ 'Now' if row[3] else '' }}'],
+            ['{{ row[0][0] }} {{ row[0][1] }}h', {{ row[1] }}, '{{ place.scale.get_colour(row[1]) }}', '{{ 'Now' if row[2] else '' }}'],
           {% endfor %}
         ]);
 
@@ -38,7 +38,7 @@
             }
           },
           hAxis: {
-            showTextEvery: 12,
+            showTextEvery: 12 * 4,
             slantedText: true
           },
         };
