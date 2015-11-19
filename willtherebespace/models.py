@@ -67,7 +67,7 @@ class Place(_Base):
             SELECT
                 to_char(date, 'ID') AS day,
                 to_char(date, 'HH24') as hour,
-                round(extract('minute' from date) / 15) as quarter,
+                trunc(extract('minute' from date) / 15) as quarter,
                 AVG(busyness) AS busyness
             FROM
                 place_update
@@ -76,7 +76,7 @@ class Place(_Base):
             GROUP BY
                 to_char(date, 'ID'),
                 to_char(date, 'HH24'),
-                round(extract('minute' from date) / 15)
+                trunc(extract('minute' from date) / 15)
         """
 
         session = _Session.object_session(self)

@@ -129,18 +129,20 @@ class BusynessChart:
     @property
     def now(self):
         d = datetime.datetime.now()
-        quarter = round(d.minute / 15)
+        quarter = int(d.minute / 15)
         return round(self.week.get(d.weekday(), d.hour, quarter))
 
     @property
     def rows(self):
         now = datetime.datetime.now()
+        quarter_now = int(now.minute / 15)
 
         days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
         for day, day_name in enumerate(days):
             for hour in range(24):
                 for quarter in range(4):
-                    is_now = day == now.weekday() and hour == now.hour
+                    is_now = day == now.weekday() and hour == now.hour \
+                        and quarter == quarter_now
                     yield (day_name, hour, quarter), \
                         self.week.get(day, hour, quarter), is_now
