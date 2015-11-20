@@ -107,13 +107,42 @@
   </div>
 
   {% if chart is not none %}
-    <div class="card m-b-lg">
+    <div class="card m-b-md">
       <div class="card-block">
         <div id="chart"></div>
 
         <br />
 
-        <p class="card-text text-center lead">Right now, {{ place.name }} is probably <strong style="color: {{ place.scale.get_colour(chart.now) }}">{{ place.scale.get_text(chart.now) }}</strong>.</p>
+        <p class="card-text text-center lead">Right now, {{ place.name }} is probably <strong style="color: {{ place.scale.get_colour(chart.now) }}">{{ place.scale.get_text(chart.now) }}</strong>, which is {% if chart.average == chart.now %}about average{% elif chart.now < chart.average %}below average{% else %}above average{% endif %}.</p>
+      </div>
+    </div>
+
+    <div class="row m-b">
+      <div class="col-md-4">
+        <div class="card card-inverse card-success text-center">
+          <div class="card-block">
+            <h4 class="card-title">{{ (chart.proportions[0] * 100) | round(1) }}%</h4>
+            <p class="card-text">of the time, it is less busy</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-inverse card-warning text-center">
+          <div class="card-block">
+            <h4 class="card-title">{{ (chart.proportions[1] * 100) | round(1) }}%</h4>
+            <p class="card-text">of the time, it is busy</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-inverse card-danger text-center">
+          <div class="card-block">
+            <h4 class="card-title">{{ (chart.proportions[2] * 100) | round(1) }}%</h4>
+            <p class="card-text">of the time, it is very busy</p>
+          </div>
+        </div>
       </div>
     </div>
   {% endif %}

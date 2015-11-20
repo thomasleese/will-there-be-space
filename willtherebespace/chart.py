@@ -72,7 +72,7 @@ class BusynessChart:
         self.raw_week = ContinousWeek()
         for row in raw_results:
             self.raw_week.set(int(row[0]) - 1, int(row[1]), int(row[2]),
-                              row[3])
+                              float(row[3]))
 
         if not self.raw_week.data:
             raise InvalidBusynessChart('There are no results so a chart '
@@ -133,6 +133,11 @@ class BusynessChart:
         return round(self.week.get(d.weekday(), d.hour, quarter))
 
     @property
+    def average(self):
+        total = len(self.week.values())
+        return round(sum(self.week.values()) / total)
+
+    @property
     def rows(self):
         now = datetime.datetime.now()
         quarter_now = int(now.minute / 15)
@@ -146,3 +151,13 @@ class BusynessChart:
                         and quarter == quarter_now
                     yield (day_name, hour, quarter), \
                         self.week.get(day, hour, quarter), is_now
+
+    @property
+    def proportions(self):
+        total = len(self.week.values())
+
+        less_busy = len([x for x in self.week.values() if 0 <= x <= 5])
+        busy = len([x for x in self.week.values() if 5 < x <= 8])
+        very_busy = len([x for x in self.week.values() if 8 < x <= 10])
+
+        return less_busy / total, busy / total, very_busy / total
