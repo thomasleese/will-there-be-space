@@ -145,7 +145,16 @@ def place(slug):
         except KeyError:
             pass
 
-        if check_recaptcha() and v.validate(form):
+        def check_last_update():
+            last_update = place.last_update
+            if last_update is None:
+                return True
+
+            seconds = (datetime.datetime.now() - last_update.date) \
+                .total_seconds()
+            return seconds > 5 * 60  # 5 minutes
+
+        if check_last_update() and check_recaptcha() and v.validate(form):
             author = make_author()
             update = PlaceUpdate(v.document['busyness'], author, place=place)
 
