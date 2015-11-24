@@ -236,6 +236,56 @@ def sitemap():
     return flask.Response(sitemap, mimetype='application/xml')
 
 
+@app.route('/api/places')
+def api_places():
+    query = flask.g.sql_session.query(Place) \
+        .outerjoin(PlaceUpdate) \
+        .order_by(PlaceUpdate.date.desc())
+
+    if 'q' in flask.request.args:
+        q = flask.request.args['q']
+        query = query.filter(sqlalchemy.or_(
+            Place.name.ilike('%' + q + '%'),
+            Place.description.ilike('%' + q + '%'),
+            Place.location.ilike('%' + q + '%')
+        ))
+
+    places = query.all()
+
+    return flask.jsonify(places=[
+        {
+            'id': place.id,
+            'name': place.name,
+            'uri': flask.url_for('.api_place', id=place.id)
+        } for place in places
+    ])
+
+
+@app.route('/api/places/<int:id>')
+def api_place(id):
+    try:
+        place = flask.g.sql_session.query(Place).get(id)
+    except sqlalchemy.orm.exc.NoResultFound:
+        flask.abort(404)
+
+    chart = place.busyness_chart
+
+    return flask.jsonify(place={
+        'id': place.id,
+        'name': place.name,
+        'scale': {
+            i: {
+                'text': place.scale.get_text(i),
+                'colour': place.scale.get_colour(i)
+            } for i in range(11)
+        },
+        'busyness': {
+            'now': chart.now,
+            'average': chart.average
+        }
+    })
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return flask.render_template('404.html'), 404
