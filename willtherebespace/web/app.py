@@ -4,9 +4,8 @@ import os
 
 from cerberus import Validator
 import flask
+from raven.contrib.flask import Sentry
 import requests
-import rollbar
-import rollbar.contrib.flask
 import sqlalchemy
 from werkzeug.contrib.fixers import ProxyFix
 
@@ -20,6 +19,8 @@ app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=2)  # Nginx and CloudFlare
 
 app.jinja_env.filters['islice'] = itertools.islice
 
+sentry = Sentry(app)
+
 
 @app.before_first_request
 def configure_recaptcha():
@@ -32,21 +33,6 @@ def configure_recaptcha():
             app.config['RECAPTCHA_ENABLED'] = False
         else:
             raise
-
-
-@app.before_first_request
-def initialise_rollbar():
-    try:
-        access_token = os.environ['ROLLBAR_ACCESS_TOKEN']
-    except KeyError:
-        return
-
-    rollbar.init(access_token, 'will-there-be-space',
-                 root=os.path.dirname(os.path.realpath(__file__)),
-                 allow_logging_basic_config=False)
-
-    flask.got_request_exception.connect(rollbar.contrib.flask.report_exception,
-                                        app)
 
 
 @app.before_first_request
