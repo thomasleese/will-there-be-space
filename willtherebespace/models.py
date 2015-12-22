@@ -4,6 +4,7 @@ import datetime
 import hashlib
 import os
 
+from slugify import slugify
 from sqlalchemy.orm import backref, scoped_session, sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base, DeferredReflection
 from passlib.context import CryptContext
@@ -35,11 +36,6 @@ class Author(_Base):
     def __init__(self, ip_address, account=None):
         self.account = account
         self.ip_address = ip_address
-
-
-def slugify(string):
-    string = string.replace('_', '-')
-    return string.replace(' ', '-').lower()
 
 
 class Place(_Base):
