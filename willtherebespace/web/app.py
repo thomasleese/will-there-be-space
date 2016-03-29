@@ -19,7 +19,8 @@ app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=2)  # Nginx and CloudFlare
 
 app.jinja_env.filters['islice'] = itertools.islice
 
-sentry = Sentry(app)
+if 'SENTRY_DSN' in os.environ:
+    sentry = Sentry(app)
 
 
 @app.before_first_request
